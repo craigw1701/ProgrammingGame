@@ -1,0 +1,23 @@
+Length = 20
+Frames = {
+	[0] = Wakingup/wakingup0001.jpg 
+	[1] = Wakingup/wakingup0002.jpg 
+	[2] = Wakingup/wakingup0003.jpg 
+	[3] = Wakingup/wakingup0004.jpg 
+	[4] = Wakingup/wakingup0005.jpg 
+	[5] = Wakingup/wakingup0006.jpg 
+	[6] = Wakingup/wakingup0007.jpg 
+	[7] = Wakingup/wakingup0008.jpg 
+	[8] = Wakingup/wakingup0009.jpg 
+	[9] = Wakingup/wakingup0010.jpg 
+	[10] = Wakingup/wakingup0011.jpg
+	[11] = Wakingup/wakingup0012.jpg
+	[12] = Wakingup/wakingup0013.jpg
+	[13] = Wakingup/wakingup0014.jpg
+	[14] = Wakingup/wakingup0015.jpg
+	[15] = Wakingup/wakingup0016.jpg
+	[16] = Wakingup/wakingup0017.jpg
+	[17] = Wakingup/wakingup0018.jpg
+	[18] = Wakingup/wakingup0019.jpg
+	[19] = Wakingup/wakingup0020.jpg
+}
