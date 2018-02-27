@@ -5,7 +5,7 @@ class LocManager
   void LoadLanguage(String aLanguage)
   {
     HashMap<String, String> text = new HashMap<String, String>();
-    println("Loading: " + aLanguage);
+    LogLn("Loading: " + aLanguage);
     BufferedReader reader = createReader("/Data/" + aLanguage + "/Text/main.txt");
     String line = null;
     while(true)
@@ -22,20 +22,20 @@ class LocManager
       
       if(line == null)
       {
-        println("break?");
+        LogLn("End of file");
         break;
       }
         
       int index = line.indexOf(":");
       if(index == -1)
       {
-        println("couldn't find ':'");
+        Warning("couldn't find ':'");
       }
       else
       {
         String theKey = line.substring(0, index);
         String theValue = line.substring(index+1);
-        println("key: " + theKey + ", value: " + theValue);
+        LogLn("key: " + theKey + ", value: " + theValue);
         text.put(theKey, theValue);
       }
     }
@@ -61,7 +61,7 @@ class LocManager
       return myTextures.get(aTextureName);
     
     String filePath = dataPath(GetImagePath() + aTextureName);
-    println("Try Loading Texture: " + filePath);
+    LogLn("Try Loading Texture: " + filePath);
     File f = new File(filePath);
     if(!f.exists())
     {
@@ -69,24 +69,23 @@ class LocManager
       f = new File(filePath);
       if(!f.exists())
       {
-        println("FAILED TO GET IMAGE: " + aTextureName);
-        exit();
+        Error("FAILED TO GET IMAGE: " + aTextureName);
+        return null;
       }
     }
     
-    println("Loading Texture: " + filePath);
+    LogLn("Loading Texture: " + filePath);
     
     PImage image = loadImage(filePath);      
     if(image == null)
     {
-      println("FAILED TO GET IMAGE: " + aTextureName);
-      exit();
+      Error("FAILED TO GET IMAGE: " + aTextureName);
       return null;
     }
     
     image.resize(width, height);
     myTextures.put(aTextureName, image);
-    //println("Failed to find text for id '" + aLocText.myTextID + "' trying fallback language:
+    //LogLn("Failed to find text for id '" + aLocText.myTextID + "' trying fallback language:
     return image;
   }
   
@@ -129,21 +128,20 @@ class LocText
 
 class Texture
 {
-  Texture(String aTextureName) { myTextureID = aTextureName; }
+    Texture(String aTextureName) { myTextureID = aTextureName; }
   PImage GetTexture() 
   {
     return locManager.GetTexture(myTextureID);
   }   
   
-  void Draw(int aX, int aY, int aWidth, int aHeight)
+  void Draw(PVector aPos, PVector aSize)
   {
-    background(GetTexture());
-    //image(GetTexture(), aX, aY, aWidth, aHeight);
+    image(GetTexture(), aPos.x, aPos.y, aSize.x, aSize.y);
   }
   
   void DrawBackground()
   {
-    Draw(width/2, height/2, width, height);
+    background(GetTexture());
   }
   
   void DrawFullScreen()

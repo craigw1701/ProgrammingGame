@@ -17,7 +17,7 @@ class GameStateManager
   
   void ClearStates()
   {
-    println("Clearning States");
+    LogLn("Clearning States");
     myCurrentStates.clear();
   }
   
@@ -87,6 +87,15 @@ class GameStateManager
     return false;
   }
   
+  boolean MouseClick()
+  {
+    for(int i = myCurrentStates.size() - 1; i >= 0; i--)
+      if(myCurrentStates.get(i).OnClicked())
+        return true;
+        
+    return false;
+  }
+  
   void AddToQueue(GameState aState)
   {
     myQueue.add(aState);
@@ -99,22 +108,22 @@ class GameStateManager
   
   void DebugPrint(String aMessage)
   {
-    println("--------");
-    println(aMessage);
-    println("Current states:");
+    LogLn("--------");
+    LogLn(aMessage);
+    LogLn("Current states:");
     for(int i = 0; i < myCurrentStates.size(); i++)
     {
-      println(" - " + myCurrentStates.get(i).myName);
+      LogLn(" - " + myCurrentStates.get(i).myName);
     }
-    println();
+    LogLn();
     
-    println("Queue states:");
+    LogLn("Queue states:");
     for(int i = 0; i < myQueue.size(); i++)
     {
-      println(" - " + myQueue.get(i).myName);
+      LogLn(" - " + myQueue.get(i).myName);
     }
-    println("--------");
-    println();
+    LogLn("--------");
+    LogLn();
   }
   
   GameState myCurrentState;

@@ -12,7 +12,7 @@ class PauseMenu extends GameState
   
   boolean ProcessInput(char aKey)
   {
-    println("Process Input: " + aKey + "/" + ESC);
+    LogLn("Process Input: " + aKey + "/" + ESC);
      if(aKey == ESC)
      {
        myIsActive = false;

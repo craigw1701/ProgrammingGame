@@ -21,7 +21,14 @@ class Animation
   void Draw(PVector aPosition, PVector aSize)
   {
     image(myAnimationData.GetFrame(myCurrentFrame), myPos.x + aPosition.x, myPos.y + aPosition.y, aSize.x, aSize.y);
-    text(myCurrentFrame, width/2,height/2);
+  }
+  
+  void DrawDebug()
+  {
+    pushStyle();
+      textAlign(CENTER, BOTTOM);
+      text("Animation Frame: " + myCurrentFrame, width/2,height);
+    popStyle();
   }
   
   AnimationData myAnimationData;
@@ -38,8 +45,7 @@ class AnimationData
     File f = new File(filePath);
     if(!f.exists())
     {
-      println("Failed to find animation with name: " + anAnimation);
-      exit();
+      Error("Failed to find animation with name: " + anAnimation);
       return false;
     }
     
@@ -62,7 +68,7 @@ class AnimationData
       
       if(line == null)
       {
-        println("End Of File");
+        LogLn("End Of File");
         break;
       }
       
@@ -89,8 +95,7 @@ class AnimationData
           currentFrame = Integer.parseInt(frameString);
           if(currentFrame < counter)
           {
-            println("Reading in an animation frame out of order");
-            exit();
+            Error("Reading in an animation frame out of order");
             return false;
           }
           for(; counter < currentFrame+1; counter++)
@@ -99,8 +104,7 @@ class AnimationData
             File animFile = new File(animFilePath);
             if(!animFile.exists())
             {
-              println("Failed to find animation file: " + animFilePath);
-              exit();
+              Error("Failed to find animation file: " + animFilePath);
               return false;
             }
             PImage frameImage = loadImage(animFilePath);
@@ -129,8 +133,7 @@ class AnimationManager
       AnimationData animData = new AnimationData();
       if(!animData.LoadAnimation(anAnimation))
       {
-        println("Failed to load animation: " + anAnimation);
-        exit();
+        Error("Failed to load animation: " + anAnimation);
         return null;
       }
       myAnimations.put(anAnimation, animData);

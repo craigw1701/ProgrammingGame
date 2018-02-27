@@ -82,26 +82,56 @@ class Level extends GameState
     return super.OnUpdate(aDeltaTime);
   }
   
-  void Trigger(String aTrigger)
+  boolean OnTrigger(String aTrigger)
   {
-    ConfigData trigger = myTriggers.GetChild(aTrigger);
+    LogLn("Trigger: " + aTrigger);
+    boolean hasHandled = false;
     
-    for(String actorName : trigger.GetChildKeys())
+    if(myTriggers != null)
     {
-      Actor actor = myActors.get(actorName);
-      actor.Trigger(trigger.GetChild(actorName));
+      if(myTriggers.HasChild(aTrigger))
+      {
+        ConfigData trigger = myTriggers.GetChild(aTrigger);
+        if(trigger.HasChild("Characters"))
+        {
+          ConfigData characters = trigger.GetChild("Characters");
+          for(String actorName : characters.GetChildKeys())
+          {
+            Actor actor = myActors.get(actorName);
+            hasHandled |= actor.Trigger(trigger.GetChild(actorName));
+          }
+        }
+        if(trigger.HasData("SetLevel"))
+        {
+          SetNextLevel(trigger.GetData("SetLevel"));      
+        }
+        if(trigger.HasData("PushLevel"))
+        {
+          PushLevel(trigger.GetData("PushLevel"));
+        }
+      }
     }
+    
+    if(hasHandled == false)
+    {
+      if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
+      {
+        myIsActive = false;
+        return true;
+      }
+    }
+    
+    return hasHandled;
   }
   
   void OnDraw()
   {
     if(myBackground != null)
-      myBackground.DrawBackground();
-    
+      myBackground.DrawBackground();    
   
     for(Actor actor : myActors.values())
     {
-      actor.Draw();
+      actor.Draw(actor == myHoveredActor);
     }
     
     if(false && myCode != null)
@@ -136,24 +166,28 @@ class Level extends GameState
   void DebugDraw()
   {    
     if(ourMouseInfo)
-    {      
-      if(myHoveredActor != null && keyCode == CONTROL && mousePressed && (mouseButton == LEFT))
-      {
-        myHoveredActor.myPosition.x = mouseX;
-        myHoveredActor.myPosition.y = mouseY;
-        println(myHoveredActor.myName + ": newPos(" + float(mouseX)/float(width) + ", " + float(mouseY)/float(height) + ")");
-      }
-      
+    {
       for(Actor actor : myActors.values())
       {
-        actor.DebugDraw();
+        actor.DebugDraw(actor == myHoveredActor);
       }
     }
   }
   
+  void SetNextLevel(String aLevelName)
+  {
+    gsManager.AddToQueue(new Level(aLevelName));
+    myIsActive = false;
+  }
+  
+  void PushLevel(String aLevelName)
+  {
+    gsManager.AddState(new Level(aLevelName));
+  }
+  
   boolean ProcessInput(char aKey)
   {
-    println("key: " + aKey);
+    //println("key: " + aKey);
      if(aKey == ESC)
      {
        gsManager.AddState(new PauseMenu());
@@ -161,12 +195,51 @@ class Level extends GameState
      }
      else if(aKey == 'f' || aKey == 'F')
      {
-       String nextLevel = myLevelConfig.GetChild("Init").GetData("NextLevel"); //<>//
-       gsManager.AddToQueue(new Level(nextLevel));
-       myIsActive = false;
+       SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"));
        return true;
      }
+    
+    if(ourMouseInfo)
+    {      
+      if(myHoveredActor != null)
+      {
+        if(aKey == CODED && keyCode == CONTROL && mousePressed && (mouseButton == LEFT))
+        {
+          myHoveredActor.myPosition.x = mouseX;
+          myHoveredActor.myPosition.y = mouseY;
+          LogLn(myHoveredActor.myName + ": newPos(" + float(mouseX)/float(width) + ", " + float(mouseY)/float(height) + ")");
+        }
+        else
+        {
+          PVector sizeChange = new PVector(0,0);
+          if(aKey == '+')
+            sizeChange.x = 1;
+          else if(aKey == '-')
+            sizeChange.x = -1;
+          else if(aKey == '1')
+            sizeChange.y = 1;
+          else if(aKey == '2')
+            sizeChange.y = -1;
+            
+          if(sizeChange.magSq() != 0)
+          {
+             myHoveredActor.mySize.x += sizeChange.x;
+             myHoveredActor.mySize.y += sizeChange.y;
+              LogLn(myHoveredActor.myName + ": newScale(" + myHoveredActor.mySize.x/float(width) + ", " + myHoveredActor.mySize.y/float(height) + ")");
+          }
+        }
+      }
+    }
      return false;
+  }
+  
+  boolean OnClicked()
+  {
+    if(myHoveredActor != null)
+    {
+      return myHoveredActor.OnClick();
+    }
+    return false;
   }
   
   int myLevelNumber;

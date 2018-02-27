@@ -38,8 +38,7 @@ String GetKeyFromLine(String aLine)
   int index = aLine.indexOf("=");
   if(index == -1)
   {
-    println("FAILED TO GET IDENTIFIER FOR LINE: " + aLine); //<>//
-    exit();
+    Error("FAILED TO GET IDENTIFIER FOR LINE: " + aLine); //<>//
     return "";
   }
  
@@ -52,8 +51,7 @@ String GetValueFromLine(String aLine)
   int index = aLine.indexOf("=");
   if(index == -1)
   {
-    println("FAILED TO GET VALUE FROM LINE: " + aLine);
-    exit();
+    Error("FAILED TO GET VALUE FROM LINE: " + aLine);
     return "";
   }
   
@@ -70,6 +68,11 @@ String GetValueFromLine(String aLine)
     val = val.substring(0, val.length()-1);
     
   return val;
+}
+
+boolean IsLineAComment(String aLine)
+{
+  return aLine.indexOf("//") == 0;
 }
 
 boolean IsLineStartOfTable(String aLine)
@@ -117,8 +120,7 @@ PVector GetVector2FromLine(String aLine)
     }
   }
  
-  println("FAILED TO GET VECTOR FROM LINE: " + aLine);
-  exit();
+  Error("FAILED TO GET VECTOR FROM LINE: " + aLine);
   return new PVector(0,0);
 }
 
@@ -128,14 +130,14 @@ color GetColorFromLine(String aLine)
   int index = theValue.indexOf("(");
   if(index == -1)
   {
-    println("Failed to get Color from Line: " + aLine);
+    Warning("Failed to get Color from Line: " + aLine);
     return color(255, 255, 255);
   }
   
   int index2 = theValue.indexOf(",", index+1);
   if(index2 == -1)
   {
-    println("Failed to get Color from Line: " + aLine);
+    Warning("Failed to get Color from Line: " + aLine);
     return color(255, 255, 255);
   }
   
@@ -145,7 +147,7 @@ color GetColorFromLine(String aLine)
   index = theValue.indexOf(",", index2+1);
   if(index == -1)
   {
-    println("Failed to get Color from Line: " + aLine);
+    Warning("Failed to get Color from Line: " + aLine);
     return color(255, 255, 255);
   }
   
@@ -155,7 +157,7 @@ color GetColorFromLine(String aLine)
   index2 = theValue.indexOf(")", index+1);
   if(index2 == -1)
   {
-    println("Failed to get Color from Line: " + aLine);
+    Warning("Failed to get Color from Line: " + aLine);
     return color(255, 255, 255);
   }
   
@@ -163,4 +165,33 @@ color GetColorFromLine(String aLine)
   int blue = Integer.parseInt(blueString);
   
   return color(red, green, blue);  
+}
+
+void LogLn(String aString)
+{
+  if(ourIsLogging)
+    println(aString);
+}
+
+void LogLn()
+{
+  if(ourIsLogging)
+    println();
+}
+
+void Log(String aString)
+{
+  if(ourIsLogging)
+    print(aString);
+}
+
+void Warning(String aWarningMessage)
+{
+  println("[WARN ] " + aWarningMessage);
+}
+
+void Error(String anErrorMessage)
+{
+  println("[ERROR] " + anErrorMessage);
+  exit();
 }

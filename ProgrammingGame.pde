@@ -5,7 +5,14 @@ AnimationManager ourAnimManager = new AnimationManager();
 FrameRate ourFrameRate;
 boolean showFPS = false;
 boolean ourMouseInfo = false;
+boolean ourIsLogging = false;
+
 boolean ourIsCtrlDown = false;
+
+void FireTrigger(String aTrigger)
+{
+  gsManager.myCurrentState.Trigger(aTrigger);
+}
 
 void setup()
 {
@@ -46,6 +53,16 @@ void keyPressed()
     
   if(key == 'x')
     ourMouseInfo = !ourMouseInfo;
+    
+  key = 0;
+  keyCode = 0;
+}
+
+void mouseClicked()
+{
+  if(gsManager.MouseClick())
+  {
+  }
 }
 
 void Update()

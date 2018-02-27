@@ -7,8 +7,7 @@ class ConfigData
   {
     if(aReader == null)
     {
-      println("SetData Failed, aReader is null");
-      exit();
+      Error("SetData Failed, aReader is null");
       return false;
     }
     
@@ -28,11 +27,14 @@ class ConfigData
       
       if(line == null)
       {
-        println("End Of File");
+        LogLn("End Of File");
         break;
       }
       
       line = line.trim();
+      
+      if(IsLineAComment(line))
+        continue;
       
       if(IsLineStartOfTable(line))
       {
@@ -72,8 +74,7 @@ class ConfigData
     if(myChildren.containsKey(anID))
       return myChildren.get(anID);
       
-    println("ERROR, FAILED TO GET CHILD: " + anID);
-    exit();
+    Error("ERROR, FAILED TO GET CHILD: " + anID);
     return new ConfigData();
   }
   
@@ -87,15 +88,15 @@ class ConfigData
     if(myData.containsKey(anID))
       return myData.get(anID);
       
-    println("ERROR, FAILED TO GET DATA: " + anID);
+    Error("ERROR, FAILED TO GET DATA: " + anID);
     return "";
   }
   
   void PrintIndention(int anIndention, String aString)
   {
     for(int i = 0; i < anIndention; i++)
-      print("  ");
-    println(aString);
+      Log("  ");
+    LogLn(aString);
   }
   
   void DebugPrint(int anIndention)
@@ -133,8 +134,8 @@ class LevelConfig
     BufferedReader reader = createReader(filePath);
     if(reader == null)
     {
-      println("FAILED TO OPEN CONFIG: " + filePath);
-      exit();
+      Error("FAILED TO OPEN CONFIG: " + filePath);
+      return;
     }
     
     myRoot = new ConfigData();
@@ -154,12 +155,12 @@ class LevelConfig
   
   void DebugPrint()
   {
-    println("-----------");
-    println("Config: " + myConfigName);
-    println();
+    LogLn("-----------");
+    LogLn("Config: " + myConfigName);
+    LogLn("");
     myRoot.DebugPrint(0);
-    println("-----------");
-    println();
+    LogLn("-----------");
+    LogLn("");
   }
   
   ConfigData myRoot;

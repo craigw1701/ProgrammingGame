@@ -24,7 +24,8 @@ class GameState
   
   boolean Init() 
   { 
-    println("Init: " + myName); return true; 
+    LogLn("Init: " + myName); 
+    return true; 
   }
   
   boolean OnStart(float aDeltaTime)
@@ -97,6 +98,21 @@ class GameState
   void OnDraw()
   {
     Fade(GetFadePercent(), myFadeColor);
+  }
+  
+  boolean Trigger(String aTrigger)
+  {
+    return OnTrigger(aTrigger);
+  }
+  
+  boolean OnTrigger(String aTrigger)
+  {
+    return false;
+  }
+  
+  boolean OnClicked()
+  {
+    return false;
   }
   
   float GetFadePercent() { return myFadePercent; }
