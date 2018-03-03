@@ -3,11 +3,13 @@ LocManager locManager = new LocManager();
 AnimationManager ourAnimManager = new AnimationManager();
 
 FrameRate ourFrameRate;
+PVector ourSourceResolution = new PVector(2560, 1600);
 boolean showFPS = false;
 boolean ourMouseInfo = false;
 boolean ourIsLogging = false;
 
 boolean ourIsCtrlDown = false;
+
 
 void FireTrigger(String aTrigger)
 {
@@ -17,7 +19,7 @@ void FireTrigger(String aTrigger)
 void setup()
 {
   //fullScreen();
-  size(1080,760);
+  size(1280,800);
   noStroke();
   colorMode(RGB, 256);
   //frameRate(8);
@@ -53,6 +55,9 @@ void keyPressed()
     
   if(key == 'x')
     ourMouseInfo = !ourMouseInfo;
+    
+  if(key == 'q')
+    ourIsLogging = !ourIsLogging;
     
   key = 0;
   keyCode = 0;

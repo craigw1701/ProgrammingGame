@@ -1,3 +1,5 @@
+PVector ourBoundingBoxBuffer = new PVector(width * 0.1, height * 0.1);
+
 class Actor
 {
   Actor(String aName)
@@ -16,10 +18,28 @@ class Actor
     else
       myPosition = new PVector(0,0);
     
-    if(aConfig.HasData("Scale"))
-      mySize = GetVector2FromLine(aConfig.GetData("Scale"));
+    if(aConfig.HasData("Idle"))
+      myCurrentAnimation = new Animation(aConfig.GetData("Idle"));
     else
-      mySize = new PVector(400, 400);
+      myCurrentTexture = new Texture(aConfig.GetData("Image"), false);
+      
+    if(aConfig.HasData("Scale"))
+    {
+      mySize = GetVector2FromLine(aConfig.GetData("Scale"));
+    }
+    else
+    {
+      PImage texture = null;
+      if(myCurrentTexture != null)
+        texture = myCurrentTexture.GetTexture();
+      else if(myCurrentAnimation != null)
+        texture = myCurrentAnimation.GetCurrentImage();
+      
+      if(texture != null)
+        mySize = GetRelativeSize(new PVector(texture.width, texture.height));
+      else
+        mySize = new PVector(400,400);
+    }
       
     if(aConfig.HasData("Tint"))
       myTint = GetColorFromLine(aConfig.GetData("Tint"));
@@ -30,11 +50,6 @@ class Actor
       myIsFullScreen = aConfig.GetData("DrawFullscreen").equals("true");
     else
       myIsFullScreen = false;
-    
-    if(aConfig.HasData("Idle"))
-      myCurrentAnimation = new Animation(aConfig.GetData("Idle"));
-    else
-      myCurrentTexture = new Texture(aConfig.GetData("Image"));
   }
   
   boolean Trigger(ConfigData aConfig)
@@ -69,6 +84,13 @@ class Actor
       tint(myTint);
       
     PVector size = mySize;
+    PVector position = myPosition.copy();
+    if(isSelected)
+    {
+      //position.x -= 5;
+      position.y -= 1;
+    }
+    
     if(myIsFullScreen)
     {
       if(myCurrentAnimation != null)
@@ -79,9 +101,9 @@ class Actor
     else
     {
       if(myCurrentAnimation != null)
-        myCurrentAnimation.Draw(myPosition, size);
+        myCurrentAnimation.Draw(position, size);
       else
-        myCurrentTexture.Draw(myPosition, size);
+        myCurrentTexture.Draw(position, size);
     }
     noTint();
   }
@@ -90,7 +112,8 @@ class Actor
   {    
       stroke(255, 0,0);  
       noFill();
-      rect(myPosition.x, myPosition.y, mySize.x, mySize.y);
+      PVector boundingBox = GetBoundingBoxSize();
+      rect(myPosition.x, myPosition.y, boundingBox.x, boundingBox.y);
       
       if(aIsSelected)
       {
@@ -99,18 +122,24 @@ class Actor
       }
   }
   
+  PVector GetBoundingBoxSize()
+  {
+    return new PVector(mySize.x + ourBoundingBoxBuffer.x, mySize.y + ourBoundingBoxBuffer.y);
+  }
+  
   boolean IsMouseOver()
   {      
-    if((myPosition.x + mySize.x/2) < mouseX)
+      PVector boundingBox = GetBoundingBoxSize();
+    if((myPosition.x + boundingBox.x/2) < mouseX)
       return false;
       
-    if((myPosition.x - mySize.x/2) > mouseX)
+    if((myPosition.x - boundingBox.x/2) > mouseX)
       return false;
       
-    if((myPosition.y + mySize.y/2) < mouseY)
+    if((myPosition.y + boundingBox.y/2) < mouseY)
       return false;
       
-    if((myPosition.y - mySize.y/2) > mouseY)
+    if((myPosition.y - boundingBox.y/2) > mouseY)
       return false;
       
     return true;

@@ -17,7 +17,7 @@ class Level extends GameState
     ConfigData initData = myLevelConfig.GetChild("Init");
     String background = initData.GetData("Background");
     if(background != "")
-      myBackground =  new Texture(background);
+      myBackground =  new Texture(background, true);
     myTextToDisplay = new LocText(initData.GetData("Text"));
     
     if(initData.HasChild("Characters"))
@@ -152,7 +152,7 @@ class Level extends GameState
     
     if(myInstructions != null)
     {
-      Texture instructions = new Texture(myInstructions.GetData("0"));
+      Texture instructions = new Texture(myInstructions.GetData("0"), false);
       instructions.DrawFullScreen();      
     }
     

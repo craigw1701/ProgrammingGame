@@ -1,0 +1,12 @@
+Length = 8
+FrameRate = 2
+Frames = {
+	[0] = FireAnimation/fireanimation0000.png
+	[1] = FireAnimation/fireanimation0001.png
+	[2] = FireAnimation/fireanimation0002.png
+	[3] = FireAnimation/fireanimation0003.png
+	[4] = FireAnimation/fireanimation0004.png
+	[5] = FireAnimation/fireanimation0005.png
+	[6] = FireAnimation/fireanimation0006.png
+	[7] = FireAnimation/fireanimation0007.png
+}

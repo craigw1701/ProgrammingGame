@@ -167,6 +167,11 @@ color GetColorFromLine(String aLine)
   return color(red, green, blue);  
 }
 
+PVector GetRelativeSize(PVector aSourceSize)
+{
+  return new PVector(aSourceSize.x / ourSourceResolution.x * width, aSourceSize.x / ourSourceResolution.y * height);
+}
+
 void LogLn(String aString)
 {
   if(ourIsLogging)

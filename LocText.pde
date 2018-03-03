@@ -83,7 +83,7 @@ class LocManager
       return null;
     }
     
-    image.resize(width, height);
+    //image.resize(width, height);
     myTextures.put(aTextureName, image);
     //LogLn("Failed to find text for id '" + aLocText.myTextID + "' trying fallback language:
     return image;
@@ -128,7 +128,13 @@ class LocText
 
 class Texture
 {
-    Texture(String aTextureName) { myTextureID = aTextureName; }
+  Texture(String aTextureName, Boolean aIsFullScreen) 
+  { 
+    myTextureID = aTextureName; 
+    if(aIsFullScreen)
+      GetTexture().resize(width, height);
+  }
+  
   PImage GetTexture() 
   {
     return locManager.GetTexture(myTextureID);

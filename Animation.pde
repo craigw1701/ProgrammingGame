@@ -11,10 +11,10 @@ class Animation
   void Update(float aDeltaTime)
   {
     myTotalRunningTime += aDeltaTime;
-    if(myTotalRunningTime > 0.125)
+    if(myTotalRunningTime > myAnimationData.myFrameRate)
     {
       myCurrentFrame = (myCurrentFrame+1) % myAnimationData.myLength;
-      myTotalRunningTime -= 0.125;
+      myTotalRunningTime -= myAnimationData.myFrameRate;
     }    
   }
   
@@ -29,6 +29,11 @@ class Animation
       textAlign(CENTER, BOTTOM);
       text("Animation Frame: " + myCurrentFrame, width/2,height);
     popStyle();
+  }
+  
+  PImage GetCurrentImage()
+  {
+    return myAnimationData.GetFrame(myCurrentFrame);
   }
   
   AnimationData myAnimationData;
@@ -81,6 +86,10 @@ class AnimationData
       {
         myLength = Integer.parseInt(theValue);
       }
+      else if(theKey.equals("FrameRate"))
+      {
+        myFrameRate = 1 / Float.parseFloat(theValue);
+      }
       else if(theKey.equals("Frames"))
       {
         isReadingFrames = true;
@@ -122,6 +131,7 @@ class AnimationData
   
   ArrayList<PImage> myImages = new ArrayList<PImage>();
   int myLength;
+  float myFrameRate = 0.125;
 };
 
 class AnimationManager
