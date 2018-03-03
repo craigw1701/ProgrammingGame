@@ -13,16 +13,22 @@ boolean ourIsCtrlDown = false;
 
 void FireTrigger(String aTrigger)
 {
+  if(aTrigger.equals("TRIGGER_QUIT_GAME"))
+  {
+    exit();
+    return;
+  }
   gsManager.myCurrentState.Trigger(aTrigger);
 }
 
 void setup()
 {
   //fullScreen();
+  //size(1280,800, FX2D);
   size(1280,800);
   noStroke();
   colorMode(RGB, 256);
-  //frameRate(8);
+  frameRate(120);
   rectMode(CENTER);
   imageMode(CENTER);
   textSize(32);
@@ -47,16 +53,16 @@ void keyPressed()
   if(gsManager.ProcessInput(key))
     key = 0;
     
-  if(key == 'l')
+  if(key == 'l' || key == 'L')
     locManager.SwitchLanguage();
     
-  if(key == 'z')
+  if(key == 'z' || key == 'Z')
     showFPS = !showFPS;
     
-  if(key == 'x')
+  if(key == 'x' || key == 'X')
     ourMouseInfo = !ourMouseInfo;
     
-  if(key == 'q')
+  if(key == 'q' || key == 'Q')
     ourIsLogging = !ourIsLogging;
     
   key = 0;

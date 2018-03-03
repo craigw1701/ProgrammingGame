@@ -38,7 +38,7 @@ String GetKeyFromLine(String aLine)
   int index = aLine.indexOf("=");
   if(index == -1)
   {
-    Error("FAILED TO GET IDENTIFIER FOR LINE: " + aLine); //<>//
+    Error("FAILED TO GET IDENTIFIER FOR LINE: " + aLine);
     return "";
   }
  
@@ -169,7 +169,7 @@ color GetColorFromLine(String aLine)
 
 PVector GetRelativeSize(PVector aSourceSize)
 {
-  return new PVector(aSourceSize.x / ourSourceResolution.x * width, aSourceSize.x / ourSourceResolution.y * height);
+  return new PVector(aSourceSize.x / ourSourceResolution.x * width, aSourceSize.y / ourSourceResolution.y * height);
 }
 
 void LogLn(String aString)

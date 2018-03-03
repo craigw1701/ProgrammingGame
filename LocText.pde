@@ -101,13 +101,29 @@ class LocManager
     else
       myCurrentLanguage = "en-GB";
       
+    ReloadImages();    
+  }
+  
+  void SetLanguage(String aLanguage)
+  {
+    myCurrentLanguage = aLanguage;
+    ReloadImages();  
+  }
+  
+  void ReloadImages()
+  {
     myTextures.clear();
+    for(Texture texture : myTextureList)
+    {
+      texture.ReloadImage();
+    }
   }
   
   String myDefaultLanguage;  
   String myCurrentLanguage;
   HashMap<String, HashMap<String, String>> myLocText = new HashMap<String, HashMap<String, String>>(); 
   HashMap<String, PImage> myTextures = new HashMap<String, PImage>();
+  ArrayList<Texture> myTextureList = new ArrayList<Texture>();
 };
 
 class LocText
@@ -131,7 +147,15 @@ class Texture
   Texture(String aTextureName, Boolean aIsFullScreen) 
   { 
     myTextureID = aTextureName; 
+    myIsFullScreen = aIsFullScreen;
     if(aIsFullScreen)
+      GetTexture().resize(width, height);
+    locManager.myTextureList.add(this);
+  }
+  
+  void ReloadImage()
+  {
+    if(myIsFullScreen)
       GetTexture().resize(width, height);
   }
   
@@ -156,4 +180,5 @@ class Texture
   }
   
   String myTextureID;
+  boolean myIsFullScreen;
 }

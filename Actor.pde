@@ -17,6 +17,9 @@ class Actor
       myPosition = GetVector2FromLine(aConfig.GetData("StartPosition"));
     else
       myPosition = new PVector(0,0);
+      
+    if(aConfig.HasData("OnClick"))
+      myIsSelectable = true;
     
     if(aConfig.HasData("Idle"))
       myCurrentAnimation = new Animation(aConfig.GetData("Idle"));
@@ -70,13 +73,13 @@ class Actor
   
   boolean OnClick()
   {
-    if(myConfig.HasData("OnClick"))
+    if(myIsSelectable)
     {
       FireTrigger(myConfig.GetData("OnClick"));
       return true;
     }
     return false;
-  }
+  } 
     
   void Draw(boolean isSelected)
   {
@@ -85,12 +88,14 @@ class Actor
       
     PVector size = mySize;
     PVector position = myPosition.copy();
-    if(isSelected && myTint != color(255,255,255,255))
+    if(isSelected && myIsSelectable)
     {
       //position.x -= 5;
       position.y -= 1;
+      //PImage image = myCurrentTexture.GetTexture().copy();
+      //image.
+      
     }
-    
     if(myIsFullScreen)
     {
       if(myCurrentAnimation != null)
@@ -153,4 +158,5 @@ class Actor
   PVector mySize;
   color myTint;
   boolean myIsFullScreen;
+  boolean myIsSelectable = false;
 };

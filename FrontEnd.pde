@@ -1,21 +1,45 @@
 class FrontEnd extends GameState
 {
-  FrontEnd() { super("Splash Screen"); myIsActive = true; }
-  boolean OnUpdate(float aDeltaTime) { return !myIsActive; }
+  FrontEnd()
+  { 
+    super("FrontEnd"); 
+    myIsActive = true; 
+  }
   
   void OnDraw()
   {
     fill(255,0,0);
-    text("Front End Menu\nPress 'n'", width/2, height/2);
+    //text("Front End Menu\nPress 'n'", width/2, height/2);
+    
+    textAlign(CENTER, TOP);
+    //ellipse(width / 2 + sin(myTimeActive) * 300, height / 2 + cos(myTimeActive) * 200, 20,20);
+    myTextToDisplay.DrawText(width/2, 0);
+    
     super.OnDraw();
+  }
+  
+  void StartNewGame()
+  {
+      gsManager.AddToQueue(new Level("Level_001", null));
+      myIsActive = false;
+  }
+  
+  boolean OnTrigger(String aTrigger)
+  {
+    if(aTrigger.equals("TRIGGER_NEW_GAME"))
+    {
+      StartNewGame();
+      return true;
+    }
+    
+    return false;
   }
   
   boolean ProcessInput(char aKey)
   {
     if(aKey == 'n' || aKey == 'N')
     {
-      gsManager.AddToQueue(new Level("Level_001"));
-      myIsActive = false;
+      StartNewGame();
       return true;
     }
     return false;

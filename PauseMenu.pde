@@ -29,6 +29,17 @@ class PauseMenu extends GameState
      return false;
   }
   
+  boolean OnTrigger(String aTrigger)
+  {
+    if(aTrigger.equals("TRIGGER_UNPAUSE"))
+    {
+       myIsActive = false;
+      return true;
+    }
+    
+    return false;
+  }
+  
   float GetFadePercent()
   {
     if(myIsQuitting)
@@ -36,17 +47,23 @@ class PauseMenu extends GameState
       
     return 1-myFadePercent;
   }
-  
-  void OnDraw()
+      
+  void Draw()
   {      
-    super.OnDraw();
+    OnDraw();
     if(myState == GameStateState.RUNNING)
     {
-      fill(255);
-      rect(width/2, height/2, 200, 150);
-      fill(0);
-      text("Pause", width/2, height/2);
+      fill(255, 255, 255, 255);
+      rect(width/2, height/2, 400, 300);
+      //fill(0);
+      //text("Pause", width/2, height/2);      
+      for(Actor actor : myActors.values())
+      {
+        actor.Draw(actor == myHoveredActor);
+      }
     }
+    
+    DebugDraw();
   }
   
   boolean myIsQuitting;

@@ -1,3 +1,4 @@
-SPLASH_TEXT_001:Ett exempel spel
+﻿SPLASH_TEXT_001:Ett exempel spel
+FRONTEND_TEXT_001:Press 'N' to for New Game(SWEDISH)
 LEVEL_001_NAME:Hej
 LEVEL_002_NAME:Mitt namn är Craig!

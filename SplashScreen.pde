@@ -1,6 +1,6 @@
 class SplashScreen extends GameState
 {
-  SplashScreen() { super("Splash Screen"); }
+  SplashScreen() { super("SplashScreen"); }
   boolean Init()
   {
     background(0);

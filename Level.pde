@@ -2,38 +2,18 @@ int ourLevelNumber = 0;
 
 class Level extends GameState
 {
-  Level(String aLevelName)
+  Level(String aLevelName, String aPreviousLevel)
   {    
     super(aLevelName); 
     ourLevelNumber++;
     myLevelNumber = ourLevelNumber;
-    myBackground = null;
+    myPreviousLevel = aPreviousLevel;
     Init();
   }
   
   boolean Init()
   {
-    myLevelConfig = new LevelConfig(myName);
     ConfigData initData = myLevelConfig.GetChild("Init");
-    String background = initData.GetData("Background");
-    if(background != "")
-      myBackground =  new Texture(background, true);
-    myTextToDisplay = new LocText(initData.GetData("Text"));
-    
-    if(initData.HasChild("Characters"))
-    {
-      ConfigData characters = initData.GetChild("Characters");
-      
-      for(String theKey : characters.GetChildKeys())
-      {
-        Actor actor = new Actor(theKey);
-        actor.Init(characters.GetChild(theKey));
-        myActors.put(theKey, actor);
-      }
-    }
-    
-    if(myLevelConfig.HasChild("Triggers"))
-      myTriggers = myLevelConfig.GetChild("Triggers");
     
     if(myLevelConfig.HasChild("Timeline"))
       myTimeline = myLevelConfig.GetChild("Timeline");
@@ -43,9 +23,7 @@ class Level extends GameState
         
      if(myLevelConfig.HasChild("Instructions"))
        myInstructions = myLevelConfig.GetChild("Instructions");
-     
-     myHoveredActor = null;
-     
+         
     return true;
   }  
   
@@ -64,21 +42,6 @@ class Level extends GameState
       }
     }
     
-    for(Actor actor : myActors.values())
-    {
-      actor.Update(aDeltaTime);
-    }
-       
-    myHoveredActor = null;
-    for(Actor actor : myActors.values())
-    {
-      if(actor.IsMouseOver())
-      {
-        myHoveredActor = actor;
-        break;
-      }
-    }
-    
     return super.OnUpdate(aDeltaTime);
   }
   
@@ -87,35 +50,14 @@ class Level extends GameState
     LogLn("Trigger: " + aTrigger);
     boolean hasHandled = false;
     
-    if(myTriggers != null)
-    {
-      if(myTriggers.HasChild(aTrigger))
-      {
-        ConfigData trigger = myTriggers.GetChild(aTrigger);
-        if(trigger.HasChild("Characters"))
-        {
-          ConfigData characters = trigger.GetChild("Characters");
-          for(String actorName : characters.GetChildKeys())
-          {
-            Actor actor = myActors.get(actorName);
-            hasHandled |= actor.Trigger(trigger.GetChild(actorName));
-          }
-        }
-        if(trigger.HasData("SetLevel"))
-        {
-          SetNextLevel(trigger.GetData("SetLevel"));      
-        }
-        if(trigger.HasData("PushLevel"))
-        {
-          PushLevel(trigger.GetData("PushLevel"));
-        }
-      }
-    }
-    
     if(hasHandled == false)
     {
       if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
       {
+        if(myPreviousLevel != null)
+        { 
+          SetNextLevel(myPreviousLevel);  
+        }
         myIsActive = false;
         return true;
       }
@@ -125,15 +67,7 @@ class Level extends GameState
   }
   
   void OnDraw()
-  {
-    if(myBackground != null)
-      myBackground.DrawBackground();    
-  
-    for(Actor actor : myActors.values())
-    {
-      actor.Draw(actor == myHoveredActor);
-    }
-    
+  {      
     if(false && myCode != null)
     {
       fill(0,0,0); 
@@ -152,37 +86,14 @@ class Level extends GameState
     
     if(myInstructions != null)
     {
-      Texture instructions = new Texture(myInstructions.GetData("0"), false);
+      Texture instructions = new Texture(myInstructions.GetData("0"), true);
       instructions.DrawFullScreen();      
     }
     
-    textAlign(CENTER, TOP);
-    //ellipse(width / 2 + sin(myTimeActive) * 300, height / 2 + cos(myTimeActive) * 200, 20,20);
-    myTextToDisplay.DrawText(width/2, 0);
-    
-    DebugDraw();
-  }
-  
-  void DebugDraw()
-  {    
-    if(ourMouseInfo)
+    if(myState != GameStateState.RUNNING)
     {
-      for(Actor actor : myActors.values())
-      {
-        actor.DebugDraw(actor == myHoveredActor);
-      }
+      super.OnDraw();
     }
-  }
-  
-  void SetNextLevel(String aLevelName)
-  {
-    gsManager.AddToQueue(new Level(aLevelName));
-    myIsActive = false;
-  }
-  
-  void PushLevel(String aLevelName)
-  {
-    gsManager.AddState(new Level(aLevelName));
   }
   
   boolean ProcessInput(char aKey)
@@ -235,21 +146,12 @@ class Level extends GameState
   
   boolean OnClicked()
   {
-    if(myHoveredActor != null)
-    {
-      return myHoveredActor.OnClick();
-    }
-    return false;
+    return super.OnClicked();
   }
   
   int myLevelNumber;
-  LocText myTextToDisplay;
-  Texture myBackground;
-  LevelConfig myLevelConfig;
+  String myPreviousLevel;
   ConfigData myTimeline;
-  ConfigData myTriggers;
   ConfigData myCode;
   ConfigData myInstructions;
-  Actor myHoveredActor;
-  HashMap<String, Actor> myActors = new HashMap<String, Actor>();
 };
