@@ -85,7 +85,7 @@ class Actor
       
     PVector size = mySize;
     PVector position = myPosition.copy();
-    if(isSelected)
+    if(isSelected && myTint != color(255,255,255,255))
     {
       //position.x -= 5;
       position.y -= 1;

@@ -6,7 +6,7 @@ class LocManager
   {
     HashMap<String, String> text = new HashMap<String, String>();
     LogLn("Loading: " + aLanguage);
-    BufferedReader reader = createReader("/Data/" + aLanguage + "/Text/main.txt");
+    BufferedReader reader = createReader(dataPath(aLanguage + "/Text/main.txt"));
     String line = null;
     while(true)
     {

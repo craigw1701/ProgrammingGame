@@ -1,5 +1,5 @@
 Length = 8
-FrameRate = 2
+FrameRate = 6
 Frames = {
 	[0] = FireAnimation/fireanimation0000.png
 	[1] = FireAnimation/fireanimation0001.png

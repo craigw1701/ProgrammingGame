@@ -130,7 +130,7 @@ class LevelConfig
   LevelConfig(String aLevelConfig)
   {
     myConfigName = aLevelConfig;
-    String filePath = "/Data/Levels/" + aLevelConfig + "/level.config";
+    String filePath = dataPath("Levels/" + aLevelConfig + "/level.config");
     BufferedReader reader = createReader(filePath);
     if(reader == null)
     {
