@@ -75,13 +75,16 @@ class GameState
       actor.Update(aDeltaTime);
     }
        
-    myHoveredActor = null;
-    for(Actor actor : myActors.values())
+    if(myState == GameStateState.RUNNING)
     {
-      if(actor.myIsSelectable && actor.IsMouseOver()) //<>//
+      myHoveredActor = null;
+      for(Actor actor : myActors.values())
       {
-        myHoveredActor = actor; //<>//
-        break;
+        if(actor.myIsSelectable && actor.IsMouseOver())
+        {
+          myHoveredActor = actor;
+          break;
+        }
       }
     }
     return !myIsActive; 
@@ -101,7 +104,9 @@ class GameState
       
     for(Actor actor : myActors.values())
     {
+      pushStyle();
       actor.Draw(actor == myHoveredActor);
+      popStyle();
     }
       
     OnDraw();
@@ -112,7 +117,7 @@ class GameState
   {    
     if(ourMouseInfo)
     {
-      pushMatrix();
+      pushStyle();
       for(Actor actor : myActors.values())
       {
         actor.DebugDraw(actor == myHoveredActor);
@@ -121,7 +126,7 @@ class GameState
       textAlign(LEFT, BOTTOM);
       text("Hovered Actor: " + ((myHoveredActor == null) ? "null" : myHoveredActor.myName), 0, height);
       
-      popMatrix();
+      popStyle();
     }
   }
   
@@ -216,6 +221,7 @@ class GameState
   {    
     if(myHoveredActor != null)
     {
+      println("Clicked: " + myHoveredActor.myName);
       return myHoveredActor.OnClick();
     }
     return false;

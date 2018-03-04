@@ -80,15 +80,22 @@ class GameStateManager
   
   boolean ProcessInput(char aKey)
   {
+    if(myCurrentState.myIsActive == false)
+      return true;
+      
     for(int i = myCurrentStates.size() - 1; i >= 0; i--)
       if(myCurrentStates.get(i).ProcessInput(aKey))
         return true;
+        
         
     return false;
   }
   
   boolean MouseClick()
   {
+    if(myCurrentState.myIsActive == false)
+      return true;
+      
     for(int i = myCurrentStates.size() - 1; i >= 0; i--)
       if(myCurrentStates.get(i).OnClicked())
         return true;

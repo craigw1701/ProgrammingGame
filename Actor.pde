@@ -53,6 +53,12 @@ class Actor
       myIsFullScreen = aConfig.GetData("DrawFullscreen").equals("true");
     else
       myIsFullScreen = false;
+      
+    if(aConfig.HasData("HasOutline"))
+      myHasOutline = aConfig.GetData("HasOutline").equals("true");
+      
+    if(aConfig.HasData("IsDisabled"))
+      myIsDisabled = aConfig.GetData("IsDisabled").equals("true");
   }
   
   boolean Trigger(ConfigData aConfig)
@@ -81,35 +87,52 @@ class Actor
     return false;
   } 
     
-  void Draw(boolean isSelected)
+  void DrawInternal(PImage anImage, int anOutlineThickness)
   {
-    if(isSelected)
-      tint(myTint);
-      
-    PVector size = mySize;
-    PVector position = myPosition.copy();
+    if(myIsFullScreen)
+          image(anImage, width/2, height/2, width + anOutlineThickness, height + anOutlineThickness);
+        else
+          image(anImage, myPosition.x, myPosition.y, mySize.x + anOutlineThickness, mySize.y + anOutlineThickness);
+  }
+  
+  void Draw(boolean isSelected)
+  {      
+    PImage currentTexture = myCurrentTexture != null ? myCurrentTexture.GetTexture() : myCurrentAnimation.GetCurrentImage();
+    
+    if(myIsDisabled)
+    {
+      PImage texture = currentTexture.copy();
+      texture.loadPixels();
+      for(int i = 0; i < texture.width * texture.height; i++)
+      {
+        if(alpha(texture.pixels[i]) > 0)
+        {
+          texture.pixels[i] = color(128,128,128,255);
+        }
+        texture.updatePixels();
+      }
+      texture.filter(POSTERIZE, 127);
+      DrawInternal(texture, 0);
+      return;
+    }
+    
     if(isSelected && myIsSelectable)
     {
-      //position.x -= 5;
-      position.y -= 1;
-      //PImage image = myCurrentTexture.GetTexture().copy();
-      //image.
-      
-    }
-    if(myIsFullScreen)
-    {
-      if(myCurrentAnimation != null)
-        myCurrentAnimation.Draw(new PVector(width/2, height/2), new PVector(width, height));
+      if(myTint == color(255, 255, 255, 255))
+      {
+        PImage texture = currentTexture.copy();
+        texture.filter(THRESHOLD, 0.0);
+        DrawInternal(texture, 10);
+        if(myHasOutline == false)
+          return;
+      }
       else
-        myCurrentTexture.DrawFullScreen();
+      {
+        tint(myTint);
+      }
     }
-    else
-    {
-      if(myCurrentAnimation != null)
-        myCurrentAnimation.Draw(position, size);
-      else
-        myCurrentTexture.Draw(position, size);
-    }
+    
+    DrawInternal(currentTexture, 0);
     noTint();
   }
   
@@ -159,4 +182,6 @@ class Actor
   color myTint;
   boolean myIsFullScreen;
   boolean myIsSelectable = false;
+  boolean myHasOutline = false;
+  boolean myIsDisabled = false;
 };
