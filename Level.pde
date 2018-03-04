@@ -10,6 +10,11 @@ class Level extends GameState
     myPreviousLevel = aPreviousLevel;
   }
   
+  String GetInstructionName(int anIndex)
+  {
+    return myName + "_Instruction_" + anIndex;
+  }
+  
   boolean OnInit()
   {
     ConfigData initData = myLevelConfig.GetChild("Init"); //<>//
@@ -26,11 +31,16 @@ class Level extends GameState
          
        while(true)
        {
-         if(!myInstructions.HasData(str(myNumberOfInstructions)))
+         if(!myInstructions.HasChild(str(myNumberOfInstructions)))
            break;
          
+         Actor instruction = new Actor(GetInstructionName(myNumberOfInstructions));
+         instruction.Init(myInstructions.GetChild(str(myNumberOfInstructions)));
+         myActors.put(instruction.myName, instruction);
          myNumberOfInstructions++;
-       }       
+       }
+       if(myNumberOfInstructions > 0)
+         ChangeInstructions(0);
     }
     LogLn("myNumberOfInstructions: " + myNumberOfInstructions + " " + myName);
     return super.OnInit();
@@ -54,6 +64,21 @@ class Level extends GameState
     return super.OnUpdate(aDeltaTime);
   }
   
+  void ChangeInstructions(int anInstruction)
+  {
+    if(myCurrentInstruction == anInstruction) //<>//
+      return;
+      
+      if(myCurrentInstruction >= 0)
+        myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(false);
+        
+      myCurrentInstruction = anInstruction;
+      myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
+      
+      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>//
+      myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
+  }
+  
   boolean OnTrigger(String aTrigger)
   {
     LogLn("Trigger: " + aTrigger);
@@ -68,14 +93,19 @@ class Level extends GameState
     }
     else if(aTrigger.equals("TRIGGER_NEXT_INSTRUCTION"))
     {
-      if(myCurrentInstruction < myNumberOfInstructions)
-        myCurrentInstruction++;
+      if(myCurrentInstruction < myNumberOfInstructions - 1)
+      {
+        ChangeInstructions(myCurrentInstruction + 1);
+        
+      }
       return true;
     }
     else if(aTrigger.equals("TRIGGER_PREVIOUS_INSTRUCTION"))
     {
       if(myCurrentInstruction > 0)
-        myCurrentInstruction--;
+      {
+        ChangeInstructions(myCurrentInstruction - 1);
+      }
       return true;
     }
     
@@ -99,13 +129,6 @@ class Level extends GameState
     Texture t = new Texture("mothsinlivingroom.png");
     t.DrawFullScreen();
     noTint();*/
-    
-    if(myInstructions != null)
-    {
-      PVector pos = GetVector2FromLine(myInstructions.GetData("StartPosition"));
-      Texture instructions = new Texture(myInstructions.GetData("0"), false);
-      instructions.Draw(pos, GetRelativeSize(instructions.GetTexture())); 
-    }
     
     if(myState != GameStateState.RUNNING)
     {
@@ -165,8 +188,8 @@ class Level extends GameState
   {
     return super.OnClicked();
   }
-  
-  int myCurrentInstruction = 0;
+    
+  int myCurrentInstruction = -1;
   int myNumberOfInstructions = 0;
   int myLevelNumber;
   String myPreviousLevel;

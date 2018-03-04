@@ -24,6 +24,9 @@ class GameState
   
   boolean Init() 
   { 
+    if(myTimeActive > 0)
+      return true;
+      
     LogLn("Init: " + myName);     
     myLevelConfig = new LevelConfig(myName);    
     ConfigData initData = myLevelConfig.GetChild("Init");    
@@ -61,7 +64,7 @@ class GameState
   
   boolean OnStart(float aDeltaTime)
   { 
-    LogLn("Start: " + myName + ", active: " + myTimeActive + ", inState: " + myTimeInState );
+    //LogLn("Start: " + myName + ", active: " + myTimeActive + ", inState: " + myTimeInState );
     myFadePercent = 1-(myTimeInState / myFadeInTime);
     //println("Start: " + myName + " - " + myFadePercent);
     return myTimeInState > myFadeInTime; 
@@ -158,7 +161,7 @@ class GameState
       if(OnStart(aDeltaTime))
         SetNextState(GameStateState.RUNNING);
     }    
-    
+     //<>//
     if(myState == GameStateState.INIT)
     {
       if(Init())

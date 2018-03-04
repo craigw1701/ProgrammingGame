@@ -159,6 +159,11 @@ class Texture
       GetTexture().resize(width, height);
   }
   
+  void SetSize(PVector aSize)
+  {
+      GetTexture().resize((int)aSize.x, (int)aSize.y);
+  }
+  
   PImage GetTexture() 
   {
     return locManager.GetTexture(myTextureID);

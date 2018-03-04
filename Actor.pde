@@ -59,6 +59,9 @@ class Actor
       
     if(aConfig.HasData("IsDisabled"))
       myIsDisabled = aConfig.GetData("IsDisabled").equals("true");
+      
+    if(aConfig.HasData("IsHidden"))
+      myIsVisible = !aConfig.GetData("IsHidden").equals("true");
   }
   
   boolean Trigger(ConfigData aConfig)
@@ -73,12 +76,18 @@ class Actor
   
   void Update(float aDeltaTime)
   {
+    if(!myIsVisible)
+      return;
+      
     if(myCurrentAnimation != null)
       myCurrentAnimation.Update(aDeltaTime);
   }
   
   boolean OnClick()
   {
+    if(!myIsVisible)
+      return false;
+      
     if(myIsSelectable)
     {
       FireTrigger(myConfig.GetData("OnClick"));
@@ -97,6 +106,9 @@ class Actor
   
   void Draw(boolean isSelected)
   {      
+    if(!myIsVisible)
+      return;
+      
     PImage currentTexture = myCurrentTexture != null ? myCurrentTexture.GetTexture() : myCurrentAnimation.GetCurrentImage();
     
     if(myIsDisabled)
@@ -138,6 +150,9 @@ class Actor
   
   void DebugDraw(boolean aIsSelected)
   {    
+    if(!myIsVisible)
+      return;
+      
       stroke(255, 0,0);  
       noFill();
       PVector boundingBox = GetBoundingBoxSize();
@@ -157,6 +172,9 @@ class Actor
   
   boolean IsMouseOver()
   {      
+    if(!myIsVisible)
+      return false;
+      
       PVector boundingBox = GetBoundingBoxSize();
     if((myPosition.x + boundingBox.x/2) < mouseX)
       return false;
@@ -173,6 +191,11 @@ class Actor
     return true;
   }
   
+  void SetVisible(boolean aIsVisible)
+  {
+    myIsVisible = aIsVisible;
+  }
+  
   String myName;
   Animation myCurrentAnimation;
   Texture myCurrentTexture;
@@ -184,4 +207,5 @@ class Actor
   boolean myIsSelectable = false;
   boolean myHasOutline = false;
   boolean myIsDisabled = false;
+  boolean myIsVisible = true;
 };
