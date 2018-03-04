@@ -21,6 +21,7 @@ class SplashScreen extends GameState
   float myUpdateTime;
   void OnDraw()
   {
+    background(0,0,0,255);
     text("Splash Screen", width/2, height/2);
     
     super.OnDraw();

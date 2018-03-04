@@ -23,6 +23,7 @@ void FireTrigger(String aTrigger)
 
 void setup()
 {
+  ourFrameRate = new FrameRate();
   //fullScreen();
   //size(1280,800, FX2D);
   size(1280,800);
@@ -37,15 +38,17 @@ void setup()
   gsManager.AddToQueue(new FrontEnd());
   locManager.LoadLanguage("sv-SE");
   locManager.LoadLanguage("en-GB");
-  ourFrameRate = new FrameRate();
 }
 
 void Fade(float aFadePercent, color aFadeColor)
 {
-  color fillColor = g.fillColor;
+  pushStyle();
+  //color fillColor = g.fillColor;
   fill(red(aFadeColor), green(aFadeColor), blue(aFadeColor), alpha(aFadeColor) * aFadePercent);
+  //println("Fade: " + aFadePercent);
   rect(width/2, height/2, width, height);
-  fill(fillColor);
+  //fill(fillColor);
+  popStyle();
 }
 
 void keyPressed()

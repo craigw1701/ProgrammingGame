@@ -20,7 +20,11 @@ class GameState
     myFadeOutTime = 1;
     myTimeActive = 0;
     myIsActive = true;
-    
+  }
+  
+  boolean Init() 
+  { 
+    LogLn("Init: " + myName);     
     myLevelConfig = new LevelConfig(myName);    
     ConfigData initData = myLevelConfig.GetChild("Init");    
     myTextToDisplay = new LocText(initData.GetData("Text"));
@@ -45,16 +49,19 @@ class GameState
     
     if(myLevelConfig.HasChild("Triggers"))
     myTriggers = myLevelConfig.GetChild("Triggers");
+    
+    return OnInit(); 
   }
   
-  boolean Init() 
-  { 
-    LogLn("Init: " + myName); 
-    return true; 
+  boolean OnInit() 
+  {    
+    LogLn("OnInit: " + myName + ": " + myTimeActive + ":" + myTimeInState);
+    return myTimeInState > 0; 
   }
   
   boolean OnStart(float aDeltaTime)
   { 
+    LogLn("Start: " + myName + ", active: " + myTimeActive + ", inState: " + myTimeInState );
     myFadePercent = 1-(myTimeInState / myFadeInTime);
     //println("Start: " + myName + " - " + myFadePercent);
     return myTimeInState > myFadeInTime; 
@@ -69,7 +76,6 @@ class GameState
   
   boolean OnUpdate(float aDeltaTime) 
   {
-    //println("Update: " + myName);  
     for(Actor actor : myActors.values())
     {
       actor.Update(aDeltaTime);
@@ -91,10 +97,17 @@ class GameState
   }
   boolean ProcessInput(char aKey) { return false; }
 
+  void SetNextState(GameStateState aState)
+  {
+    myNextState = aState;
+  }
+  
   void SetState(GameStateState aState)
   {
+    LogLn("State: " + aState + ":" + myName + ":" + myTimeActive);
     myTimeInState = 0;
     myState = aState;
+    myNextState = aState;
   }
 
   void Draw()
@@ -131,38 +144,42 @@ class GameState
   }
   
   boolean Update(float aDeltaTime)
-  {
-    myTimeInState += aDeltaTime;
-    myTimeActive += aDeltaTime;
-    
+  {    
+    if(myState != myNextState)
+      SetState(myNextState);
+      
     if(myState == GameStateState.STOPPED)
     {
       return true;
     }
     
-    if(myState == GameStateState.INIT)
-    {
-      if(Init())
-        SetState(myState = GameStateState.STARTING);
-    }
-    
     if(myState == GameStateState.STARTING)
     {
       if(OnStart(aDeltaTime))
-        SetState(GameStateState.RUNNING);
+        SetNextState(GameStateState.RUNNING);
+    }    
+    
+    if(myState == GameStateState.INIT)
+    {
+      if(Init())
+        SetNextState(GameStateState.STARTING);
     }
+    
     
     if(myState == GameStateState.RUNNING)
     {
       if(OnUpdate(aDeltaTime))
-        SetState(GameStateState.STOPPING);
+        SetNextState(GameStateState.STOPPING);
     }
     
     if(myState == GameStateState.STOPPING)
     {
        if(OnEnd(aDeltaTime))
-         SetState(GameStateState.STOPPED);
+         SetNextState(GameStateState.STOPPED);
     }
+    
+    myTimeInState += aDeltaTime;
+    myTimeActive += aDeltaTime;
     
     return false;
   }
@@ -221,7 +238,6 @@ class GameState
   {    
     if(myHoveredActor != null)
     {
-      println("Clicked: " + myHoveredActor.myName);
       return myHoveredActor.OnClick();
     }
     return false;
@@ -241,7 +257,8 @@ class GameState
   float GetFadePercent() { return myFadePercent; }
   
   // Member Variables
-  GameStateState myState;  
+  GameStateState myState;
+  GameStateState myNextState; 
   LevelConfig myLevelConfig;  
   ConfigData myTriggers;
   Texture myBackground = null;

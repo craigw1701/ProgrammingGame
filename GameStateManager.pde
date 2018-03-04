@@ -67,9 +67,12 @@ class GameStateManager
       return false;
     
     if(myCurrentState.Update(aDeltaTime))
+    {
       RemoveState(myCurrentState);
+      return true;
+    }
     
-    background(0,0,0,255);      
+    //background(0,0,0,255);      
     for(int i = 0; i < myCurrentStates.size(); i++)
     {
       fill(255);

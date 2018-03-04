@@ -4,16 +4,15 @@ class Level extends GameState
 {
   Level(String aLevelName, String aPreviousLevel)
   {    
-    super(aLevelName); 
+    super(aLevelName);  //<>//
     ourLevelNumber++;
     myLevelNumber = ourLevelNumber;
     myPreviousLevel = aPreviousLevel;
-    Init();
   }
   
-  boolean Init()
+  boolean OnInit()
   {
-    ConfigData initData = myLevelConfig.GetChild("Init");
+    ConfigData initData = myLevelConfig.GetChild("Init"); //<>//
     
     if(myLevelConfig.HasChild("Timeline"))
       myTimeline = myLevelConfig.GetChild("Timeline");
@@ -22,9 +21,19 @@ class Level extends GameState
         myCode = myLevelConfig.GetChild("Code");
         
      if(myLevelConfig.HasChild("Instructions"))
+     {
        myInstructions = myLevelConfig.GetChild("Instructions");
          
-    return true;
+       while(true)
+       {
+         if(!myInstructions.HasData(str(myNumberOfInstructions)))
+           break;
+         
+         myNumberOfInstructions++;
+       }       
+    }
+    LogLn("myNumberOfInstructions: " + myNumberOfInstructions + " " + myName);
+    return super.OnInit();
   }  
   
   boolean OnUpdate(float aDeltaTime)   
@@ -48,22 +57,29 @@ class Level extends GameState
   boolean OnTrigger(String aTrigger)
   {
     LogLn("Trigger: " + aTrigger);
-    boolean hasHandled = false;
-    
-    if(hasHandled == false)
+    if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
     {
-      if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
-      {
-        if(myPreviousLevel != null)
-        { 
-          SetNextLevel(myPreviousLevel);  
-        }
-        myIsActive = false;
-        return true;
+      if(myPreviousLevel != null)
+      { 
+        SetNextLevel(myPreviousLevel);  
       }
+      myIsActive = false;
+      return true;
+    }
+    else if(aTrigger.equals("TRIGGER_NEXT_INSTRUCTION"))
+    {
+      if(myCurrentInstruction < myNumberOfInstructions)
+        myCurrentInstruction++;
+      return true;
+    }
+    else if(aTrigger.equals("TRIGGER_PREVIOUS_INSTRUCTION"))
+    {
+      if(myCurrentInstruction > 0)
+        myCurrentInstruction--;
+      return true;
     }
     
-    return hasHandled;
+    return false;
   }
   
   void OnDraw()
@@ -86,8 +102,9 @@ class Level extends GameState
     
     if(myInstructions != null)
     {
-      Texture instructions = new Texture(myInstructions.GetData("0"), true);
-      instructions.DrawFullScreen();      
+      PVector pos = GetVector2FromLine(myInstructions.GetData("StartPosition"));
+      Texture instructions = new Texture(myInstructions.GetData("0"), false);
+      instructions.Draw(pos, GetRelativeSize(instructions.GetTexture())); 
     }
     
     if(myState != GameStateState.RUNNING)
@@ -149,6 +166,8 @@ class Level extends GameState
     return super.OnClicked();
   }
   
+  int myCurrentInstruction = 0;
+  int myNumberOfInstructions = 0;
   int myLevelNumber;
   String myPreviousLevel;
   ConfigData myTimeline;

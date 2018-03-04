@@ -4,6 +4,7 @@ class FrameRate
   
   void Update()
   {    
+    myTotalFrames++;
     myDeltaTime = float(millis() - myLastTime) / 1000;
     myLastTime = millis();
     
@@ -31,6 +32,7 @@ class FrameRate
   int myLastTime = 0;
   float myDeltaTime = 0;
   FloatList myAverageTimes = new FloatList();
+  int myTotalFrames = 0;
 }
 
 String GetKeyFromLine(String aLine)
@@ -172,10 +174,20 @@ PVector GetRelativeSize(PVector aSourceSize)
   return new PVector(aSourceSize.x / ourSourceResolution.x * width, aSourceSize.y / ourSourceResolution.y * height);
 }
 
+PVector GetRelativeSize(PImage aSourceImage)
+{
+  return new PVector(aSourceImage.width / ourSourceResolution.x * width, aSourceImage.height / ourSourceResolution.y * height);
+}
+
+String LogPrefix()
+{
+  return "[" + ourFrameRate.myTotalFrames + "] ";
+}
+
 void LogLn(String aString)
 {
   if(ourIsLogging)
-    println(aString);
+    println(LogPrefix() + aString);
 }
 
 void LogLn()
@@ -192,11 +204,11 @@ void Log(String aString)
 
 void Warning(String aWarningMessage)
 {
-  println("[WARN ] " + aWarningMessage);
+  println(LogPrefix() + "[WARN] " + aWarningMessage);
 }
 
 void Error(String anErrorMessage)
 {
-  println("[ERROR] " + anErrorMessage);
+  println(LogPrefix() + "[ERROR] " + anErrorMessage);
   exit();
 }
