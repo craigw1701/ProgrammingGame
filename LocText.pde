@@ -136,6 +136,8 @@ class LocText
   
   void DrawText(int aX, int aY)
   {
+    noStroke();
+    fill(255,255,255,255);
       text(GetText(), aX, aY);     
   }
   

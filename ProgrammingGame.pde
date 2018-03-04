@@ -1,6 +1,7 @@
 GameStateManager gsManager = new GameStateManager();
 LocManager locManager = new LocManager();
 AnimationManager ourAnimManager = new AnimationManager();
+PFont font;
 
 FrameRate ourFrameRate;
 PVector ourSourceResolution = new PVector(2560, 1600);
@@ -27,17 +28,22 @@ void setup()
   //fullScreen();
   //size(1280,800, FX2D);
   size(1280,800);
+  font = loadFont("WhiteRabbit-32.vlw");
+  textFont(font);
   noStroke();
   colorMode(RGB, 256);
   frameRate(120);
   rectMode(CENTER);
   imageMode(CENTER);
+
   textSize(32);
   textAlign(CENTER, CENTER);
   gsManager.AddState(new SplashScreen());
   gsManager.AddToQueue(new FrontEnd());
   locManager.LoadLanguage("sv-SE");
   locManager.LoadLanguage("en-GB");
+  
+  text("word", width/2, height/2);
 }
 
 void Fade(float aFadePercent, color aFadeColor)

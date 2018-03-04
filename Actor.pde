@@ -163,6 +163,7 @@ class Actor
         if(myCurrentAnimation != null)
           myCurrentAnimation.DrawDebug();
       }
+      noStroke();
   }
   
   PVector GetBoundingBoxSize()
