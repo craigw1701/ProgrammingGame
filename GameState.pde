@@ -36,7 +36,7 @@ class GameState
     {
       String background = initData.GetData("Background");
       if(background != "")
-        myBackground =  new Texture(background, true);
+        myBackground =  new Texture("Backgrounds/" + background, true);
     }
     if(initData.HasChild("Characters"))
     {
@@ -161,7 +161,7 @@ class GameState
       if(OnStart(aDeltaTime))
         SetNextState(GameStateState.RUNNING);
     }    
-     //<>//
+     //<>// //<>//
     if(myState == GameStateState.INIT)
     {
       if(Init())
@@ -192,42 +192,63 @@ class GameState
     Fade(GetFadePercent(), myFadeColor);
   }
   
+  void AddDelayedTrigger(ConfigData aConfig)
+  {
+    println("ERRROR");
+  }
+  
+  boolean Trigger(ConfigData aConfig)
+  {
+    if(aConfig.HasData("Delay"))
+      {
+        AddDelayedTrigger(aConfig);
+        return true;
+      }
+       
+      boolean hasHandled = false;
+      if(aConfig.HasChild("Characters"))
+      {
+        ConfigData characters = aConfig.GetChild("Characters");
+        for(String actorName : characters.GetChildKeys())
+        {
+          Actor actor = myActors.get(actorName); //<>//
+          hasHandled |= actor.Trigger(characters.GetChild(actorName));
+        }
+      }
+      if(aConfig.HasData("SetLevel"))
+      {
+        SetNextLevel(aConfig.GetData("SetLevel"));   
+        hasHandled = true;
+      }
+      if(aConfig.HasData("PushLevel"))
+      {
+        PushLevel(aConfig.GetData("PushLevel"));
+        hasHandled = true;
+      }
+      if(aConfig.HasData("SetLanguage"))
+      {
+        locManager.SetLanguage(aConfig.GetData("SetLanguage"));
+        hasHandled = true;
+      }
+      if(aConfig.HasData("Name"))
+      {
+        Trigger(aConfig.GetData("Name"));
+        hasHandled = true;
+      }
+      
+      return hasHandled;
+  }
+  
   boolean Trigger(String aTrigger)
   {    
-    boolean hasHandled = false;
     if(myTriggers != null)
     {
       if(myTriggers.HasChild(aTrigger))
       {
-        ConfigData trigger = myTriggers.GetChild(aTrigger);
-        if(trigger.HasChild("Characters"))
-        {
-          ConfigData characters = trigger.GetChild("Characters");
-          for(String actorName : characters.GetChildKeys())
-          {
-            Actor actor = myActors.get(actorName);
-            hasHandled |= actor.Trigger(trigger.GetChild(actorName));
-          }
-        }
-        if(trigger.HasData("SetLevel"))
-        {
-          SetNextLevel(trigger.GetData("SetLevel"));   
-          hasHandled = true;
-        }
-        if(trigger.HasData("PushLevel"))
-        {
-          PushLevel(trigger.GetData("PushLevel"));
-          hasHandled = true;
-        }
-        if(trigger.HasData("SetLanguage"))
-        {
-          locManager.SetLanguage(trigger.GetData("SetLanguage"));
-        }
+        if(Trigger(myTriggers.GetChild(aTrigger)))
+          return true;        
       }
-    }
-    
-    if(hasHandled)
-      return true;
+    }    
       
     return OnTrigger(aTrigger);
   }

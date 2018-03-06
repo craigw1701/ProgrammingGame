@@ -4,7 +4,7 @@ class Level extends GameState
 {
   Level(String aLevelName, String aPreviousLevel)
   {    
-    super(aLevelName);  //<>//
+    super(aLevelName);  //<>// //<>//
     ourLevelNumber++;
     myLevelNumber = ourLevelNumber;
     myPreviousLevel = aPreviousLevel;
@@ -17,10 +17,12 @@ class Level extends GameState
   
   boolean OnInit()
   {
-    ConfigData initData = myLevelConfig.GetChild("Init"); //<>//
+    ConfigData initData = myLevelConfig.GetChild("Init");
     
     if(myLevelConfig.HasChild("Timeline"))
       myTimeline = myLevelConfig.GetChild("Timeline");
+    else
+      myTimeline = new ConfigData(); 
       
      if(myLevelConfig.HasChild("Code"))
         myCode = myLevelConfig.GetChild("Code");
@@ -43,7 +45,13 @@ class Level extends GameState
          ChangeInstructions(0);
     }
     LogLn("myNumberOfInstructions: " + myNumberOfInstructions + " " + myName);
-    return super.OnInit();
+    boolean result = super.OnInit();
+    
+    if(initData.HasData("OnStart"))
+    {
+      FireTrigger(initData.GetData("OnStart"));
+    }
+    return result;
   }  
   
   boolean OnUpdate(float aDeltaTime)   
@@ -51,22 +59,37 @@ class Level extends GameState
     float lastFrameTime = myTimeActive - aDeltaTime;
     if(myTimeline != null)
     {
-      for(String s : myTimeline.myData.keySet())
+      HashMap<String, ConfigData> temp = new HashMap<String, ConfigData>();
+      //Iterator<Map.Entry<String, ConfigData> > iter = myTimeline.myChildren.keySet().iterator();
+      temp.putAll(myTimeline.myChildren);
+      for(String s : temp.keySet())
       {
         float time = Float.parseFloat(s);
         if(time > lastFrameTime && time < myTimeActive)
         {
-          Trigger(myTimeline.myData.get(s));
+          ConfigData data = myTimeline.myChildren.get(s);
+          if(data.HasData("TriggerName"))
+          {
+            Trigger(data.GetData("TriggerName"));
+          }
+          else
+          {
+            Trigger(data); //<>//
+          }
+          myTimeline.myChildren.remove(s);
+          
+         myTimeline.DebugPrint(0);
         }
       }
     }
+    
     
     return super.OnUpdate(aDeltaTime);
   }
   
   void ChangeInstructions(int anInstruction)
   {
-    if(myCurrentInstruction == anInstruction) //<>//
+    if(myCurrentInstruction == anInstruction) //<>// //<>//
       return;
       
       if(myCurrentInstruction >= 0)
@@ -75,8 +98,15 @@ class Level extends GameState
       myCurrentInstruction = anInstruction;
       myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
       
-      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>//
+      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>// //<>//
       myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
+  }
+  
+  void AddDelayedTrigger(ConfigData aConfig)
+  {
+    float delay = Float.parseFloat(aConfig.GetData("Delay"));
+    float triggerTime = myTimeActive + delay;
+    myTimeline.myChildren.put(str(triggerTime), aConfig.GetChild("Trigger"));
   }
   
   boolean OnTrigger(String aTrigger)
@@ -107,6 +137,10 @@ class Level extends GameState
         ChangeInstructions(myCurrentInstruction - 1);
       }
       return true;
+    }
+    else
+    {
+      
     }
     
     return false;
