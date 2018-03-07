@@ -7,6 +7,7 @@ class Actor
     myName = aName;
     myConfig = null;
     myCurrentAnimation = null;
+    myCurrentIdle = null;
     myCurrentTexture = null;
   }
   
@@ -22,7 +23,7 @@ class Actor
       myIsSelectable = true;
     
     if(aConfig.HasData("Idle"))
-      myCurrentAnimation = new Animation(aConfig.GetData("Idle"));
+      myCurrentAnimation = myCurrentIdle = new Animation(aConfig.GetData("Idle"));
     else
       myCurrentTexture = new Texture(aConfig.GetData("Image"), false);
       
@@ -66,11 +67,19 @@ class Actor
   
   boolean Trigger(ConfigData aConfig)
   {
+    println("Trigger: " + myName); //<>//
     if(aConfig.HasData("Say"))
     {
        println(aConfig.GetData("Say"));
        return true;
     }
+    else if(aConfig.HasData("PlayOneShot"))
+    {
+      myCurrentAnimation = new Animation(aConfig.GetData("PlayOneShot")); 
+      myCurrentAnimation.myIsLooping = false;
+      return true;
+    }
+    
     return false;
   }
   
@@ -80,7 +89,13 @@ class Actor
       return;
       
     if(myCurrentAnimation != null)
+    {
       myCurrentAnimation.Update(aDeltaTime);
+      if(!myCurrentAnimation.myIsRunning)
+      {
+        myCurrentAnimation = myCurrentIdle;
+      }
+    }
   }
   
   boolean OnClick()
@@ -199,6 +214,7 @@ class Actor
   
   String myName;
   Animation myCurrentAnimation;
+  Animation myCurrentIdle;
   Texture myCurrentTexture;
   ConfigData myConfig;
   PVector myPosition;

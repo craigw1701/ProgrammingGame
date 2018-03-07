@@ -10,10 +10,27 @@ class Animation
   
   void Update(float aDeltaTime)
   {
+    if(myIsRunning == false)
+      return;
+      
     myTotalRunningTime += aDeltaTime;
     if(myTotalRunningTime > myAnimationData.myFrameRate)
     {
-      myCurrentFrame = (myCurrentFrame+1) % myAnimationData.myLength;
+      if(myCurrentFrame + 1 > myAnimationData.myLength - 1)
+      {
+        if(myIsLooping)
+        {
+          myCurrentFrame = 0;
+        }
+        else
+        {
+          myIsRunning = false;
+        }
+      }
+      else
+      {
+        myCurrentFrame++;
+      }
       myTotalRunningTime -= myAnimationData.myFrameRate;
     }    
   }
@@ -40,6 +57,8 @@ class Animation
   int myCurrentFrame;
   PVector myPos;
   float myTotalRunningTime;
+  boolean myIsLooping = true;
+  boolean myIsRunning = true;
 };
 
 class AnimationData
