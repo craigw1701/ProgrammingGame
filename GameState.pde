@@ -50,8 +50,14 @@ class GameState
       }
     }
     
+    if(initData.HasData("HideCursor"))
+    {
+      myShowCursor = !initData.GetData("HideCursor").equals("true");
+    }
+    
     if(myLevelConfig.HasChild("Triggers"))
     myTriggers = myLevelConfig.GetChild("Triggers");
+    
     
     return OnInit(); 
   }
@@ -199,13 +205,13 @@ class GameState
   
   boolean Trigger(ConfigData aConfig)
   {
+      boolean hasHandled = false;
     if(aConfig.HasData("Delay"))
       {
-        AddDelayedTrigger(aConfig);
-        return true;
+        AddDelayedTrigger(aConfig); //<>//
+        hasHandled = true;
       }
        
-      boolean hasHandled = false;
       if(aConfig.HasChild("Characters"))
       {
         ConfigData characters = aConfig.GetChild("Characters");
@@ -232,7 +238,7 @@ class GameState
       }
       if(aConfig.HasData("Name"))
       {
-        Trigger(aConfig.GetData("Name"));
+        Trigger(aConfig.GetData("Name")); //<>//
         hasHandled = true;
       }
       
@@ -295,6 +301,7 @@ class GameState
   float myFadeOutTime;
   color myFadeColor;
 
+  boolean myShowCursor = true;
   boolean myIsActive;
   float myFadePercent;
   float myTimeInState;

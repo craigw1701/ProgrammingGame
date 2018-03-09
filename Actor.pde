@@ -68,19 +68,30 @@ class Actor
   boolean Trigger(ConfigData aConfig)
   {
     println("Trigger: " + myName); //<>//
+    boolean handled = false;
     if(aConfig.HasData("Say"))
     {
        println(aConfig.GetData("Say"));
-       return true;
+       handled = true;
     }
-    else if(aConfig.HasData("PlayOneShot"))
+    if(aConfig.HasData("PlayOneShot"))
     {
       myCurrentAnimation = new Animation(aConfig.GetData("PlayOneShot")); 
       myCurrentAnimation.myIsLooping = false;
-      return true;
+      handled = true;
+    }
+    if(aConfig.HasData("PlayIdle"))
+    {
+      myCurrentIdle = new Animation(aConfig.GetData("PlayIdle"));
+      handled = true;
+    }
+    if(aConfig.HasData("SetVisible"))
+    {
+      myIsVisible = aConfig.GetData("SetVisible").equals(true);
+      handled = true;
     }
     
-    return false;
+    return handled;
   }
   
   void Update(float aDeltaTime)
@@ -191,7 +202,7 @@ class Actor
     if(!myIsVisible)
       return false;
       
-      PVector boundingBox = GetBoundingBoxSize();
+    PVector boundingBox = GetBoundingBoxSize();
     if((myPosition.x + boundingBox.x/2) < mouseX)
       return false;
       

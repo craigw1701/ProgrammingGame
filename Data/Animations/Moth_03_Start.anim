@@ -1,0 +1,14 @@
+Length = 11
+Frames = {
+	[0] = moth3startanimation\moth3start0000.png
+	[1] = moth3startanimation\moth3start0001.png
+	[2] = moth3startanimation\moth3start0002.png
+	[3] = moth3startanimation\moth3start0003.png
+	[4] = moth3startanimation\moth3start0004.png
+	[5] = moth3startanimation\moth3start0005.png
+	[6] = moth3startanimation\moth3start0006.png
+	[7] = moth3startanimation\moth3start0007.png
+	[8] = moth3startanimation\moth3start0008.png
+	[9] = moth3startanimation\moth3start0009.png
+	[10] = moth3startanimation\moth3start0010.png
+}

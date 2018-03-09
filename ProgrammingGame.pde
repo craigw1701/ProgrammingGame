@@ -1,9 +1,10 @@
 GameStateManager gsManager = new GameStateManager();
 LocManager locManager = new LocManager();
 AnimationManager ourAnimManager = new AnimationManager();
-PFont font;
-
 FrameRate ourFrameRate;
+Cursor ourCursor;
+
+PFont font;
 PVector ourSourceResolution = new PVector(2560, 1600);
 boolean showFPS = false;
 boolean ourMouseInfo = false;
@@ -26,8 +27,8 @@ void setup()
 {
   ourFrameRate = new FrameRate();
   //fullScreen();
-  //size(1280,800, FX2D);
-  size(1280,800);
+  size(1280,800, FX2D);
+  //size(1280,800);
   font = loadFont("WhiteRabbit-32.vlw");
   textFont(font);
   noStroke();
@@ -35,6 +36,7 @@ void setup()
   frameRate(120);
   rectMode(CENTER);
   imageMode(CENTER);
+  frameRate(30);
 
   textSize(32);
   textAlign(CENTER, CENTER);
@@ -42,6 +44,8 @@ void setup()
   gsManager.AddToQueue(new FrontEnd());
   locManager.LoadLanguage("sv-SE");
   locManager.LoadLanguage("en-GB");
+  
+  ourCursor = new Cursor();
   
   text("word", width/2, height/2);
 }
@@ -90,6 +94,7 @@ void Update()
   ourFrameRate.Update();
   
   gsManager.Update(ourFrameRate.myDeltaTime);
+  ourCursor.Update(ourFrameRate.myDeltaTime);
   
   if(showFPS)
     ourFrameRate.Display();
