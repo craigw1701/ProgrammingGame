@@ -4,7 +4,7 @@ class Level extends GameState
 {
   Level(String aLevelName, String aPreviousLevel)
   {    
-    super(aLevelName);  //<>// //<>//
+    super(aLevelName);
     ourLevelNumber++;
     myLevelNumber = ourLevelNumber;
     myPreviousLevel = aPreviousLevel;
@@ -65,7 +65,7 @@ class Level extends GameState
       for(String s : temp.keySet())
       {
         float time = Float.parseFloat(s);
-        if(time > lastFrameTime && time < myTimeActive)
+        if(/*time > lastFrameTime &&*/time < myTimeActive)
         {
           ConfigData data = myTimeline.myChildren.get(s);
           if(data.HasData("TriggerName"))
@@ -89,7 +89,7 @@ class Level extends GameState
   
   void ChangeInstructions(int anInstruction)
   {
-    if(myCurrentInstruction == anInstruction) //<>// //<>//
+    if(myCurrentInstruction == anInstruction) //<>// //<>// //<>//
       return;
       
       if(myCurrentInstruction >= 0)
@@ -98,7 +98,7 @@ class Level extends GameState
       myCurrentInstruction = anInstruction;
       myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
       
-      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>// //<>//
+      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>// //<>// //<>//
       myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
   }
   
@@ -107,6 +107,12 @@ class Level extends GameState
     float delay = Float.parseFloat(aConfig.GetData("Delay"));
     float triggerTime = myTimeActive + delay;
     myTimeline.myChildren.put(str(triggerTime), aConfig.GetChild("Trigger"));
+  }
+  
+  void AddDelayedTrigger(float aDelay, ConfigData aConfig)
+  {
+    float triggerTime = myTimeActive + aDelay;
+    myTimeline.myChildren.put(str(triggerTime), aConfig);
   }
   
   boolean OnTrigger(String aTrigger)

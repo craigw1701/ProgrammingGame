@@ -74,7 +74,7 @@ class ConfigData
     if(myChildren.containsKey(anID))
       return myChildren.get(anID);
       
-    Error("ERROR, FAILED TO GET CHILD: " + anID); //<>// //<>//
+    Error("ERROR, FAILED TO GET CHILD: " + anID); //<>//
     return new ConfigData();
   }
   
@@ -95,7 +95,7 @@ class ConfigData
   void PrintIndention(int anIndention, String aString)
   {
     for(int i = 0; i < anIndention; i++)
-      Log("  ");
+      aString = "  " + aString;
     LogLn(aString);
   }
   

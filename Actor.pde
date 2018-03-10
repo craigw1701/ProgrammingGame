@@ -90,6 +90,11 @@ class Actor
       myIsVisible = aConfig.GetData("SetVisible").equals(true);
       handled = true;
     }
+    if(aConfig.HasData("MoveDelta"))
+    {
+      myMoveDelta = GetVector2FromLine(aConfig.GetData("MoveDelta"));
+      handled = true;
+    }
     
     return handled;
   }
@@ -98,6 +103,9 @@ class Actor
   {
     if(!myIsVisible)
       return;
+      
+    myPosition.x += myMoveDelta.x * aDeltaTime;
+    myPosition.x += myMoveDelta.y * aDeltaTime;
       
     if(myCurrentAnimation != null)
     {
@@ -236,4 +244,6 @@ class Actor
   boolean myHasOutline = false;
   boolean myIsDisabled = false;
   boolean myIsVisible = true;
+  
+  PVector myMoveDelta = new PVector(0,0);
 };

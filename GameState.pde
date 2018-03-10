@@ -166,8 +166,8 @@ class GameState
     {
       if(OnStart(aDeltaTime))
         SetNextState(GameStateState.RUNNING);
-    }    
-     //<>// //<>//
+    }
+     //<>//
     if(myState == GameStateState.INIT)
     {
       if(Init())
@@ -200,49 +200,64 @@ class GameState
   
   void AddDelayedTrigger(ConfigData aConfig)
   {
-    println("ERRROR");
+    Error("AddDelayedTrigger1");
+  }
+  
+  void AddDelayedTrigger(float aDelay, ConfigData aConfig)
+  {
+    Error("AddDelayedTrigger2");
   }
   
   boolean Trigger(ConfigData aConfig)
   {
-      boolean hasHandled = false;
+    boolean hasHandled = false;
     if(aConfig.HasData("Delay"))
+    {
+      AddDelayedTrigger(aConfig);
+      hasHandled = true;
+    }
+    
+    if(aConfig.HasChild("Timeline"))
+    {
+      ConfigData timeline = aConfig.GetChild("Timeline");
+      for(String theKey : timeline.GetChildKeys())
       {
-        AddDelayedTrigger(aConfig); //<>//
-        hasHandled = true;
+        float delay = Float.parseFloat(theKey); //<>//
+        AddDelayedTrigger(delay, timeline.GetChild(theKey));
       }
-       
-      if(aConfig.HasChild("Characters"))
+    }
+     
+    if(aConfig.HasChild("Characters"))
+    {
+      ConfigData characters = aConfig.GetChild("Characters");
+      for(String actorName : characters.GetChildKeys())
       {
-        ConfigData characters = aConfig.GetChild("Characters");
-        for(String actorName : characters.GetChildKeys())
-        {
-          Actor actor = myActors.get(actorName); //<>//
-          hasHandled |= actor.Trigger(characters.GetChild(actorName));
-        }
+        Actor actor = myActors.get(actorName); //<>//
+        hasHandled |= actor.Trigger(characters.GetChild(actorName));
       }
-      if(aConfig.HasData("SetLevel"))
-      {
-        SetNextLevel(aConfig.GetData("SetLevel"));   
-        hasHandled = true;
-      }
-      if(aConfig.HasData("PushLevel"))
-      {
-        PushLevel(aConfig.GetData("PushLevel"));
-        hasHandled = true;
-      }
-      if(aConfig.HasData("SetLanguage"))
-      {
-        locManager.SetLanguage(aConfig.GetData("SetLanguage"));
-        hasHandled = true;
-      }
-      if(aConfig.HasData("Name"))
-      {
-        Trigger(aConfig.GetData("Name")); //<>//
-        hasHandled = true;
-      }
-      
-      return hasHandled;
+    }
+    if(aConfig.HasData("SetLevel"))
+    {
+      SetNextLevel(aConfig.GetData("SetLevel"));   
+      hasHandled = true;
+    }
+    if(aConfig.HasData("PushLevel"))
+    {
+      PushLevel(aConfig.GetData("PushLevel"));
+      hasHandled = true;
+    }
+    if(aConfig.HasData("SetLanguage"))
+    {
+      locManager.SetLanguage(aConfig.GetData("SetLanguage"));
+      hasHandled = true;
+    }
+    if(aConfig.HasData("Name"))
+    {
+      Trigger(aConfig.GetData("Name")); //<>//
+      hasHandled = true;
+    }
+    
+    return hasHandled;
   }
   
   boolean Trigger(String aTrigger)
