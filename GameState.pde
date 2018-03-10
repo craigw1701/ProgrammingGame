@@ -167,7 +167,7 @@ class GameState
       if(OnStart(aDeltaTime))
         SetNextState(GameStateState.RUNNING);
     }
-     //<>//
+     //<>// //<>//
     if(myState == GameStateState.INIT)
     {
       if(Init())
@@ -238,7 +238,7 @@ class GameState
     }
     if(aConfig.HasData("SetLevel"))
     {
-      SetNextLevel(aConfig.GetData("SetLevel"));   
+      SetNextLevel(aConfig.GetData("SetLevel"), myName);   
       hasHandled = true;
     }
     if(aConfig.HasData("PushLevel"))
@@ -288,9 +288,9 @@ class GameState
     return false;
   }
   
-  void SetNextLevel(String aLevelName)
+  void SetNextLevel(String aLevelName, String aPreviousLevel)
   {
-    gsManager.AddToQueue(new Level(aLevelName, myName));
+    gsManager.AddToQueue(new Level(aLevelName, aPreviousLevel)); //<>//
     myIsActive = false;
   }
   

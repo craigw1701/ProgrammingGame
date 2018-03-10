@@ -105,7 +105,7 @@ class Actor
       return;
       
     myPosition.x += myMoveDelta.x * aDeltaTime;
-    myPosition.x += myMoveDelta.y * aDeltaTime;
+    myPosition.y += myMoveDelta.y * aDeltaTime;
       
     if(myCurrentAnimation != null)
     {

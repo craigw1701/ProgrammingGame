@@ -1,5 +1,7 @@
 int ourLevelNumber = 0;
 
+ArrayList<String> ourLevelStack = new ArrayList<String>();
+
 class Level extends GameState
 {
   Level(String aLevelName, String aPreviousLevel)
@@ -8,6 +10,8 @@ class Level extends GameState
     ourLevelNumber++;
     myLevelNumber = ourLevelNumber;
     myPreviousLevel = aPreviousLevel;
+    if(myPreviousLevel != null)
+      ourLevelStack.add(myPreviousLevel); //<>//
   }
   
   String GetInstructionName(int anIndex)
@@ -85,7 +89,7 @@ class Level extends GameState
     
     
     return super.OnUpdate(aDeltaTime);
-  }
+  } //<>//
   
   void ChangeInstructions(int anInstruction)
   {
@@ -94,11 +98,11 @@ class Level extends GameState
       
       if(myCurrentInstruction >= 0)
         myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(false);
-        
+         //<>//
       myCurrentInstruction = anInstruction;
       myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
       
-      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0; //<>// //<>// //<>//
+      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0;
       myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
   }
   
@@ -120,10 +124,9 @@ class Level extends GameState
     LogLn("Trigger: " + aTrigger);
     if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
     {
-      if(myPreviousLevel != null)
-      { 
-        SetNextLevel(myPreviousLevel);  
-      }
+      String previousLevel = ourLevelStack.get(ourLevelStack.size()-1); //<>//
+      SetNextLevel(previousLevel, null);   //<>//
+      ourLevelStack.remove(previousLevel);
       myIsActive = false;
       return true;
     }
@@ -186,7 +189,7 @@ class Level extends GameState
      }
      else if(aKey == 'f' || aKey == 'F')
      {
-       SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"));
+       SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"), null);
        return true;
      }
     
