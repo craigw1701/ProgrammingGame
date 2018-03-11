@@ -119,6 +119,19 @@ class Level extends GameState
     myTimeline.myChildren.put(str(triggerTime), aConfig);
   }
   
+  boolean OnTrigger(ConfigData aConfig)
+  {
+    if(aConfig.HasData("HideInstructions")) //<>//
+    {      
+      if(myCurrentInstruction >= 0)
+        myActors.get(GetInstructionName(myCurrentInstruction)).myIsVisible = false;
+        
+      myActors.get("PreviousButton").SetVisible(false);
+      myActors.get("NextButton").SetVisible(false);
+    }
+    return false;
+  }
+  
   boolean OnTrigger(String aTrigger)
   {
     LogLn("Trigger: " + aTrigger);
@@ -134,8 +147,7 @@ class Level extends GameState
     {
       if(myCurrentInstruction < myNumberOfInstructions - 1)
       {
-        ChangeInstructions(myCurrentInstruction + 1);
-        
+        ChangeInstructions(myCurrentInstruction + 1);        
       }
       return true;
     }
@@ -243,5 +255,5 @@ class Level extends GameState
   String myPreviousLevel;
   ConfigData myTimeline;
   ConfigData myCode;
-  ConfigData myInstructions;
+  ConfigData myInstructions;  
 };

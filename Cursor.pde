@@ -11,7 +11,7 @@ class Cursor
   {
     if(gsManager.myCurrentState.myState != GameStateState.RUNNING || gsManager.myCurrentState.myShowCursor == false)
     {
-      noCursor();
+      cursor(WAIT);
       myCurrentImage = null;
     }
     else
@@ -19,12 +19,14 @@ class Cursor
       if(gsManager.myCurrentState.myHoveredActor != null)
       {
         myCurrentImage = myClick;
-        cursor(myCurrentImage);
+        //cursor(myCurrentImage);
+        cursor(HAND);
       }
       else
       {
         myCurrentImage = myDefault;
-        cursor(myCurrentImage);
+        //cursor(myCurrentImage);
+        cursor(ARROW);
       }      
     }
   }

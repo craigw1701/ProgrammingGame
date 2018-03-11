@@ -1,10 +1,14 @@
-Pawn CreatePawn(String aName, ConfigData aConfig) //<>//
+import processing.sound.*; //<>//
+
+Pawn CreatePawn(String aName, ConfigData aConfig)
 {
   if(aConfig.HasData("PawnType"))
   {
     String pawnType= aConfig.GetData("PawnType");
     if(pawnType.equals("TextInput"))
       return new TextInput(aName);
+    else if(pawnType.equals("Code"))
+      return new Code(aName);
   }
   
   return new Actor(aName);
@@ -185,41 +189,24 @@ void Warning(String aWarningMessage)
 void Error(String anErrorMessage)
 {
   println(LogPrefix() + "[ERROR] " + anErrorMessage);
+  PlayErrorSound();
   exit();
 }
-/*
-class BoundingBox
-{
-  BoundingBox(PVector aTopLeft, PVector aSize)
-  {
-    mySize = new PVector(aSize.x, aSize.y);
-    myCentre = new PVector(aTopLeft.x + mySize.x, aTopLeft.y + mySize.y);
-    mySize.x += ourBoundingBoxBuffer.x;
-    mySize.y += ourBoundingBoxBuffer.y;    
-  }
-  
-  BoundingBox()
-  {
-    myCentre = new PVector(width/2, height/2);
-    mySize = new PVector(100, 100);
-  }
-  
-  PVector myCentre;
-  PVector mySize;
-};
 
-BoundingBox GetBoundingBoxFromCenter(PVector aCenterPos, PVector aSize)
+SoundFile errorSound = null;
+SoundFile successSound = null;
+void PlayErrorSound()
 {
-  BoundingBox bb = new BoundingBox(); 
-  bb.myCentre = aCenterPos.copy();
-  bb.mySize = aSize.copy();
-  bb.mySize.x += ourBoundingBoxBuffer.x;
-  bb.mySize.y += ourBoundingBoxBuffer.y;
-  return bb;
+  if(errorSound == null)
+    errorSound = new SoundFile(this, "Audio/ErrorSound.wav");
+    
+  errorSound.play();
 }
 
-BoundingBox GetBoundingBoxFromTopLeft(PVector aTopLeft, PVector aSize)
+void PlaySuccessSound()
 {
-  return new BoundingBox(aTopLeft, aSize);
+  if(successSound == null)
+    successSound = new SoundFile(this, "Audio/SuccessSound.wav");
+    
+  successSound.play();
 }
-*/

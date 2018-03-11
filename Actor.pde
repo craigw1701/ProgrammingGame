@@ -52,7 +52,7 @@ class Actor extends Pawn
   
   boolean OnTrigger(ConfigData aConfig)
   {
-    println("Trigger: " + myName);
+    LogLn("Trigger: " + myName);
     boolean handled = false;
     if(aConfig.HasData("Say"))
     {

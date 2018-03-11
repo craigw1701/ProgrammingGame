@@ -1,8 +1,13 @@
+import controlP5.*;
+
 GameStateManager gsManager = new GameStateManager();
 LocManager locManager = new LocManager();
 AnimationManager ourAnimManager = new AnimationManager();
+SoundManager ourSoundManager = new SoundManager();
 FrameRate ourFrameRate;
 Cursor ourCursor;
+ControlP5 cp5;
+PApplet ourThis;
 
 PFont font;
 PVector ourSourceResolution = new PVector(2560, 1600);
@@ -23,8 +28,10 @@ void FireTrigger(String aTrigger)
   gsManager.myCurrentState.Trigger(aTrigger);
 }
 
+
 void setup()
 {
+  ourThis = this;
   ourFrameRate = new FrameRate();
   //fullScreen();
   //size(1280,800, FX2D);
@@ -39,17 +46,19 @@ void setup()
   frameRate(30);
 
   textSize(32);
-  textAlign(CENTER, CENTER);
+  textAlign(CENTER, CENTER);  
+  cp5 = new ControlP5(this, font);
+  cp5.setAutoDraw(false);
+  
   gsManager.AddState(new SplashScreen());
   gsManager.AddToQueue(new FrontEnd());
   locManager.LoadLanguage("sv-SE");
   locManager.LoadLanguage("en-GB");
   
   ourCursor = new Cursor();
-  
   text("word", width/2, height/2);
 }
-
+ //<>//
 void Fade(float aFadePercent, color aFadeColor)
 {
   pushStyle();
@@ -73,7 +82,10 @@ void keyPressed()
     showFPS = !showFPS;
     
   if(key == 'x' || key == 'X')
+  {
     ourMouseInfo = !ourMouseInfo;
+    ControlP5.DEBUG = ourMouseInfo; 
+  }
     
   if(key == 'q' || key == 'Q')
     ourIsLogging = !ourIsLogging;
@@ -87,6 +99,18 @@ void mouseClicked()
   if(gsManager.MouseClick())
   {
   }
+}
+
+void controlEvent(ControlEvent theEvent) 
+{
+  if (theEvent.isAssignableFrom(Textfield.class)) 
+  {
+    /*println("controlEvent: accessing a string from controller '"
+      +theEvent.getName()+"': "
+      +theEvent.getStringValue()
+      );*/
+    FireTrigger("OnSubmit");
+  } 
 }
 
 void Update()

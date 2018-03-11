@@ -30,7 +30,7 @@ class Pawn
     boolean handled = false;
     if(aConfig.HasData("SetVisible"))
     {
-      myIsVisible = aConfig.GetData("SetVisible").equals(true);
+      SetVisible(aConfig.GetData("SetVisible").equals("true"));
       handled = true;
     }
     
@@ -119,17 +119,28 @@ class Pawn
   
   void SetVisible(boolean aIsVisible)
   {
+    if(myIsVisible == aIsVisible)
+      return;
+      
+    LogLn("SetVisible (" + myName + ") - " + aIsVisible);
     myIsVisible = aIsVisible;
+    if(myIsVisible && myConfig.HasData("OnShow"))
+      FireTrigger(myConfig.GetData("OnShow"));
+    else if(!myIsVisible && myConfig.HasData("OnHide"))
+      FireTrigger(myConfig.GetData("OnHide"));
+    OnVisibilityChanged();
   }
   
   // Virtual Functions
   void OnInit() {}
   boolean OnTrigger(ConfigData aConfig) { return false; }
+  boolean OnTrigger(String aTrigger) { return false; }
   void OnUpdate(float aDeltaTime) {}
   void OnDraw(boolean isSelected) {}
   boolean OnClicked() { return false; }
   void OnDebugDraw(boolean aIsSelected) {}
   boolean OnProcessInput(char aKey) { return false; }
+  void OnVisibilityChanged() {}
   
   // Variable
   String myName = "INVALID";

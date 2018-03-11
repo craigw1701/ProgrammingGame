@@ -1,3 +1,5 @@
+import java.util.List;
+
 enum GameStateState
 {
   INIT,
@@ -48,6 +50,11 @@ class GameState
         actor.Init(characters.GetChild(theKey));
         myActors.put(theKey, actor);
       }
+    }
+    
+    if(initData.HasData("Music"))
+    {
+      ourSoundManager.PlayMusic(initData.GetData("Music"));
     }
     
     if(initData.HasData("HideCursor"))
@@ -104,6 +111,7 @@ class GameState
     }
     return !myIsActive; 
   }
+  
   boolean ProcessInput(char aKey) { return false; }
 
   void SetNextState(GameStateState aState)
@@ -114,11 +122,21 @@ class GameState
   void SetState(GameStateState aState)
   {
     LogLn("State: " + aState + ":" + myName + ":" + myTimeActive);
+    
+    if(aState == GameStateState.STOPPED)
+    {
+      for(String name : myControlNames)
+      {
+        cp5.remove(name); //<>//
+      }
+      myControlNames.clear();
+    }
+   
     myTimeInState = 0;
     myState = aState;
     myNextState = aState;
   }
-
+  
   void Draw()
   {
     if(myBackground != null)
@@ -130,6 +148,9 @@ class GameState
       actor.Draw(actor == myHoveredActor);
       popStyle();
     }
+    
+    textAlign(CENTER, CENTER);
+    cp5.draw();
       
     OnDraw();
     DebugDraw();
@@ -167,7 +188,7 @@ class GameState
       if(OnStart(aDeltaTime))
         SetNextState(GameStateState.RUNNING);
     }
-     //<>// //<>//
+     //<>//
     if(myState == GameStateState.INIT)
     {
       if(Init())
@@ -196,6 +217,7 @@ class GameState
   void OnDraw()
   {
     Fade(GetFadePercent(), myFadeColor);
+    ourSoundManager.SetMusicVolume(1 - GetFadePercent());
   }
   
   void AddDelayedTrigger(ConfigData aConfig)
@@ -257,7 +279,7 @@ class GameState
       hasHandled = true;
     }
     
-    return hasHandled;
+    return OnTrigger(aConfig) || hasHandled;
   }
   
   boolean Trigger(String aTrigger)
@@ -271,13 +293,19 @@ class GameState
       }
     }    
       
-    return OnTrigger(aTrigger);
-  }
-  
-  boolean OnTrigger(String aTrigger)
-  {
+    if(OnTrigger(aTrigger))
+      return true;
+      
+    for(Pawn actor : myActors.values())
+    {
+      if(actor.OnTrigger(aTrigger))
+        return true;
+    }
     return false;
   }
+  
+  boolean OnTrigger(String aTrigger) { return false; }
+  boolean OnTrigger(ConfigData aConfig) { return false; }
   
   boolean OnClicked()
   {    
@@ -300,6 +328,23 @@ class GameState
   }
   
   float GetFadePercent() { return myFadePercent; }
+
+  Textfield AddTextField(String aName)
+  {
+    Textfield textField = cp5.addTextfield(aName, 100,100, 64, 32).setAutoClear(false).setColorBackground(InputBackgroundColor).setColorForeground(InputForgroundColor).setColorActive(InputActiveColor);
+    textField.align(CENTER, CENTER, CENTER, CENTER);
+    Label c = textField.getCaptionLabel();
+    c.hide();
+    myControlNames.add(aName);
+    return textField;
+  }
+  
+  Textlabel AddTextLabel(String aName)
+  {
+    Textlabel textLabel = cp5.addTextlabel(aName, "", 32, 32).setColor(color(255,255,255,255)).setFont(font);
+    myControlNames.add(aName);
+    return textLabel;
+  }
   
   // Member Variables
   GameStateState myState;
@@ -308,7 +353,8 @@ class GameState
   ConfigData myTriggers;
   Texture myBackground = null;
   Pawn myHoveredActor = null;
-  HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();
+  HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();  
+  ArrayList<String> myControlNames = new ArrayList<String>();
   LocText myTextToDisplay;
   
   String myName;
