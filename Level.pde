@@ -11,7 +11,7 @@ class Level extends GameState
     myLevelNumber = ourLevelNumber;
     myPreviousLevel = aPreviousLevel;
     if(myPreviousLevel != null)
-      ourLevelStack.add(myPreviousLevel); //<>//
+      ourLevelStack.add(myPreviousLevel);
   }
   
   String GetInstructionName(int anIndex)
@@ -78,7 +78,7 @@ class Level extends GameState
           }
           else
           {
-            Trigger(data); //<>//
+            Trigger(data);
           }
           myTimeline.myChildren.remove(s);
           
@@ -89,16 +89,16 @@ class Level extends GameState
     
     
     return super.OnUpdate(aDeltaTime);
-  } //<>//
+  }
   
   void ChangeInstructions(int anInstruction)
   {
-    if(myCurrentInstruction == anInstruction) //<>// //<>// //<>//
+    if(myCurrentInstruction == anInstruction)
       return;
       
       if(myCurrentInstruction >= 0)
         myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(false);
-         //<>//
+        
       myCurrentInstruction = anInstruction;
       myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
       
@@ -124,8 +124,8 @@ class Level extends GameState
     LogLn("Trigger: " + aTrigger);
     if(aTrigger.equals("TRIGGER_LEVEL_BACK"))
     {
-      String previousLevel = ourLevelStack.get(ourLevelStack.size()-1); //<>//
-      SetNextLevel(previousLevel, null);   //<>//
+      String previousLevel = ourLevelStack.get(ourLevelStack.size()-1);
+      SetNextLevel(previousLevel, null);  
       ourLevelStack.remove(previousLevel);
       myIsActive = false;
       return true;
@@ -191,6 +191,11 @@ class Level extends GameState
      {
        SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"), null);
        return true;
+     }
+     for(Pawn actor : myActors.values())
+     {
+       if(actor.ProcessInput(aKey))
+         return true;
      }
     
     if(ourMouseInfo)

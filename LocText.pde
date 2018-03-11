@@ -141,6 +141,11 @@ class LocText
       text(GetText(), aX, aY);     
   }
   
+  void DrawText(PVector aPos)
+  {
+    DrawText((int)aPos.x, (int)aPos.y);     
+  }
+  
   String myTextID;
 };
 

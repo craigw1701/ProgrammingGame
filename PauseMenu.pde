@@ -57,7 +57,7 @@ class PauseMenu extends GameState
       rect(width/2, height/2, 400, 300);
       //fill(0);
       //text("Pause", width/2, height/2);      
-      for(Actor actor : myActors.values())
+      for(Pawn actor : myActors.values())
       {
         actor.Draw(actor == myHoveredActor);
       }

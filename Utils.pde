@@ -1,38 +1,13 @@
-class FrameRate
+Pawn CreatePawn(String aName, ConfigData aConfig) //<>//
 {
-  FrameRate() { myLastTime = millis(); }
-  
-  void Update()
-  {    
-    myTotalFrames++;
-    myDeltaTime = float(millis() - myLastTime) / 1000;
-    myLastTime = millis();
-    
-    if(myAverageTimes.size() > 100)
-      myAverageTimes.remove(0);
-      
-    myAverageTimes.append(myDeltaTime);
-  }
-  
-  void Display()
+  if(aConfig.HasData("PawnType"))
   {
-    float totalTime = 0;
-    for(float time : myAverageTimes)
-      totalTime += time;
-    
-    textAlign(LEFT, TOP);
-    text(totalTime / myAverageTimes.size(), 0, 0);
-    textAlign(RIGHT, TOP);
-    text(1 / myDeltaTime, width, 0);
-    textAlign(RIGHT, BOTTOM);
-    text(1/(totalTime / myAverageTimes.size()), width, height);
-    textAlign(CENTER, CENTER);
+    String pawnType= aConfig.GetData("PawnType");
+    if(pawnType.equals("TextInput"))
+      return new TextInput(aName);
   }
   
-  int myLastTime = 0;
-  float myDeltaTime = 0;
-  FloatList myAverageTimes = new FloatList();
-  int myTotalFrames = 0;
+  return new Actor(aName);
 }
 
 String GetKeyFromLine(String aLine)
@@ -212,3 +187,39 @@ void Error(String anErrorMessage)
   println(LogPrefix() + "[ERROR] " + anErrorMessage);
   exit();
 }
+/*
+class BoundingBox
+{
+  BoundingBox(PVector aTopLeft, PVector aSize)
+  {
+    mySize = new PVector(aSize.x, aSize.y);
+    myCentre = new PVector(aTopLeft.x + mySize.x, aTopLeft.y + mySize.y);
+    mySize.x += ourBoundingBoxBuffer.x;
+    mySize.y += ourBoundingBoxBuffer.y;    
+  }
+  
+  BoundingBox()
+  {
+    myCentre = new PVector(width/2, height/2);
+    mySize = new PVector(100, 100);
+  }
+  
+  PVector myCentre;
+  PVector mySize;
+};
+
+BoundingBox GetBoundingBoxFromCenter(PVector aCenterPos, PVector aSize)
+{
+  BoundingBox bb = new BoundingBox(); 
+  bb.myCentre = aCenterPos.copy();
+  bb.mySize = aSize.copy();
+  bb.mySize.x += ourBoundingBoxBuffer.x;
+  bb.mySize.y += ourBoundingBoxBuffer.y;
+  return bb;
+}
+
+BoundingBox GetBoundingBoxFromTopLeft(PVector aTopLeft, PVector aSize)
+{
+  return new BoundingBox(aTopLeft, aSize);
+}
+*/

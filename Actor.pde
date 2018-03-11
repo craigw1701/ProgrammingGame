@@ -1,35 +1,26 @@
-PVector ourBoundingBoxBuffer = new PVector(width * 0.1, height * 0.1);
-
-class Actor
+class Actor extends Pawn
 {
   Actor(String aName)
   {
-    myName = aName;
-    myConfig = null;
+    super(aName);
     myCurrentAnimation = null;
     myCurrentIdle = null;
     myCurrentTexture = null;
   }
   
-  void Init(ConfigData aConfig)
-  {
-    myConfig = aConfig;
-    if(aConfig.HasData("StartPosition"))
-      myPosition = GetVector2FromLine(aConfig.GetData("StartPosition"));
-    else
-      myPosition = new PVector(0,0);
-      
-    if(aConfig.HasData("OnClick"))
+  void OnInit()
+  {    
+    if(myConfig.HasData("OnClick"))
       myIsSelectable = true;
     
-    if(aConfig.HasData("Idle"))
-      myCurrentAnimation = myCurrentIdle = new Animation(aConfig.GetData("Idle"));
-    else
-      myCurrentTexture = new Texture(aConfig.GetData("Image"), false);
+    if(myConfig.HasData("Idle"))
+      myCurrentAnimation = myCurrentIdle = new Animation(myConfig.GetData("Idle"));
+    else if(myConfig.HasData("Image"))
+      myCurrentTexture = new Texture(myConfig.GetData("Image"), false);
       
-    if(aConfig.HasData("Scale"))
+    if(myConfig.HasData("Scale"))
     {
-      mySize = GetVector2FromLine(aConfig.GetData("Scale"));
+      mySize = GetVector2FromLine(myConfig.GetData("Scale"));
     }
     else
     {
@@ -45,29 +36,23 @@ class Actor
         mySize = new PVector(400,400);
     }
       
-    if(aConfig.HasData("Tint"))
-      myTint = GetColorFromLine(aConfig.GetData("Tint"));
+    if(myConfig.HasData("Tint"))
+      myTint = GetColorFromLine(myConfig.GetData("Tint"));
     else
       myTint = color(255, 255, 255, 255);
       
-    if(aConfig.HasData("DrawFullscreen"))
-      myIsFullScreen = aConfig.GetData("DrawFullscreen").equals("true");
+    if(myConfig.HasData("DrawFullscreen"))
+      myIsFullScreen = myConfig.GetData("DrawFullscreen").equals("true");
     else
       myIsFullScreen = false;
       
-    if(aConfig.HasData("HasOutline"))
-      myHasOutline = aConfig.GetData("HasOutline").equals("true");
-      
-    if(aConfig.HasData("IsDisabled"))
-      myIsDisabled = aConfig.GetData("IsDisabled").equals("true");
-      
-    if(aConfig.HasData("IsHidden"))
-      myIsVisible = !aConfig.GetData("IsHidden").equals("true");
+    if(myConfig.HasData("HasOutline"))
+      myHasOutline = myConfig.GetData("HasOutline").equals("true");
   }
   
-  boolean Trigger(ConfigData aConfig)
+  boolean OnTrigger(ConfigData aConfig)
   {
-    println("Trigger: " + myName); //<>//
+    println("Trigger: " + myName);
     boolean handled = false;
     if(aConfig.HasData("Say"))
     {
@@ -85,11 +70,6 @@ class Actor
       myCurrentIdle = new Animation(aConfig.GetData("PlayIdle"));
       handled = true;
     }
-    if(aConfig.HasData("SetVisible"))
-    {
-      myIsVisible = aConfig.GetData("SetVisible").equals(true);
-      handled = true;
-    }
     if(aConfig.HasData("MoveDelta"))
     {
       myMoveDelta = GetVector2FromLine(aConfig.GetData("MoveDelta"));
@@ -99,11 +79,8 @@ class Actor
     return handled;
   }
   
-  void Update(float aDeltaTime)
-  {
-    if(!myIsVisible)
-      return;
-      
+  void OnUpdate(float aDeltaTime)
+  {      
     myPosition.x += myMoveDelta.x * aDeltaTime;
     myPosition.y += myMoveDelta.y * aDeltaTime;
       
@@ -117,17 +94,10 @@ class Actor
     }
   }
   
-  boolean OnClick()
+  boolean OnClicked()
   {
-    if(!myIsVisible)
-      return false;
-      
-    if(myIsSelectable)
-    {
-      FireTrigger(myConfig.GetData("OnClick"));
-      return true;
-    }
-    return false;
+    FireTrigger(myConfig.GetData("OnClick"));
+    return true;
   } 
     
   void DrawInternal(PImage anImage, int anOutlineThickness)
@@ -138,13 +108,9 @@ class Actor
           image(anImage, myPosition.x, myPosition.y, mySize.x + anOutlineThickness, mySize.y + anOutlineThickness);
   }
   
-  void Draw(boolean isSelected)
-  {      
-    if(!myIsVisible)
-      return;
-      
+  void OnDraw(boolean isSelected)
+  {           
     PImage currentTexture = myCurrentTexture != null ? myCurrentTexture.GetTexture() : myCurrentAnimation.GetCurrentImage();
-    
     if(myIsDisabled)
     {
       PImage texture = currentTexture.copy();
@@ -179,71 +145,27 @@ class Actor
     }
     
     DrawInternal(currentTexture, 0);
+      
     noTint();
   }
   
-  void DebugDraw(boolean aIsSelected)
-  {    
-    if(!myIsVisible)
-      return;
-      
-      stroke(255, 0,0);  
-      noFill();
-      PVector boundingBox = GetBoundingBoxSize();
-      rect(myPosition.x, myPosition.y, boundingBox.x, boundingBox.y);
-      
+  void OnDebugDraw(boolean aIsSelected)
+  {          
       if(aIsSelected)
       {
         if(myCurrentAnimation != null)
           myCurrentAnimation.DrawDebug();
       }
-      noStroke();
   }
   
-  PVector GetBoundingBoxSize()
-  {
-    return new PVector(mySize.x + ourBoundingBoxBuffer.x, mySize.y + ourBoundingBoxBuffer.y);
-  }
-  
-  boolean IsMouseOver()
-  {      
-    if(!myIsVisible)
-      return false;
-      
-    PVector boundingBox = GetBoundingBoxSize();
-    if((myPosition.x + boundingBox.x/2) < mouseX)
-      return false;
-      
-    if((myPosition.x - boundingBox.x/2) > mouseX)
-      return false;
-      
-    if((myPosition.y + boundingBox.y/2) < mouseY)
-      return false;
-      
-    if((myPosition.y - boundingBox.y/2) > mouseY)
-      return false;
-      
-    return true;
-  }
-  
-  void SetVisible(boolean aIsVisible)
-  {
-    myIsVisible = aIsVisible;
-  }
-  
-  String myName;
   Animation myCurrentAnimation;
   Animation myCurrentIdle;
-  Texture myCurrentTexture;
-  ConfigData myConfig;
-  PVector myPosition;
-  PVector mySize;
+  Texture myCurrentTexture = null;
+  TextInput myTextInput = null;
+  
   color myTint;
   boolean myIsFullScreen;
-  boolean myIsSelectable = false;
   boolean myHasOutline = false;
-  boolean myIsDisabled = false;
-  boolean myIsVisible = true;
   
   PVector myMoveDelta = new PVector(0,0);
 };

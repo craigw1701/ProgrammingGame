@@ -44,7 +44,7 @@ class GameState
       
       for(String theKey : characters.GetChildKeys())
       {
-        Actor actor = new Actor(theKey);
+        Pawn actor = CreatePawn(theKey, characters.GetChild(theKey));
         actor.Init(characters.GetChild(theKey));
         myActors.put(theKey, actor);
       }
@@ -85,7 +85,7 @@ class GameState
   
   boolean OnUpdate(float aDeltaTime) 
   {
-    for(Actor actor : myActors.values())
+    for(Pawn actor : myActors.values())
     {
       actor.Update(aDeltaTime);
     }
@@ -93,7 +93,7 @@ class GameState
     if(myState == GameStateState.RUNNING)
     {
       myHoveredActor = null;
-      for(Actor actor : myActors.values())
+      for(Pawn actor : myActors.values())
       {
         if(actor.myIsSelectable && actor.IsMouseOver())
         {
@@ -124,7 +124,7 @@ class GameState
     if(myBackground != null)
       myBackground.DrawBackground();  
       
-    for(Actor actor : myActors.values())
+    for(Pawn actor : myActors.values())
     {
       pushStyle();
       actor.Draw(actor == myHoveredActor);
@@ -140,7 +140,7 @@ class GameState
     if(ourMouseInfo)
     {
       pushStyle();
-      for(Actor actor : myActors.values())
+      for(Pawn actor : myActors.values())
       {
         actor.DebugDraw(actor == myHoveredActor);
       }
@@ -222,7 +222,7 @@ class GameState
       ConfigData timeline = aConfig.GetChild("Timeline");
       for(String theKey : timeline.GetChildKeys())
       {
-        float delay = Float.parseFloat(theKey); //<>//
+        float delay = Float.parseFloat(theKey);
         AddDelayedTrigger(delay, timeline.GetChild(theKey));
       }
     }
@@ -232,7 +232,7 @@ class GameState
       ConfigData characters = aConfig.GetChild("Characters");
       for(String actorName : characters.GetChildKeys())
       {
-        Actor actor = myActors.get(actorName); //<>//
+        Pawn actor = myActors.get(actorName);
         hasHandled |= actor.Trigger(characters.GetChild(actorName));
       }
     }
@@ -253,7 +253,7 @@ class GameState
     }
     if(aConfig.HasData("Name"))
     {
-      Trigger(aConfig.GetData("Name")); //<>//
+      Trigger(aConfig.GetData("Name"));
       hasHandled = true;
     }
     
@@ -283,14 +283,14 @@ class GameState
   {    
     if(myHoveredActor != null)
     {
-      return myHoveredActor.OnClick();
+      return myHoveredActor.Clicked();
     }
     return false;
   }
   
   void SetNextLevel(String aLevelName, String aPreviousLevel)
   {
-    gsManager.AddToQueue(new Level(aLevelName, aPreviousLevel)); //<>//
+    gsManager.AddToQueue(new Level(aLevelName, aPreviousLevel));
     myIsActive = false;
   }
   
@@ -307,8 +307,8 @@ class GameState
   LevelConfig myLevelConfig;  
   ConfigData myTriggers;
   Texture myBackground = null;
-  Actor myHoveredActor = null;
-  HashMap<String, Actor> myActors = new HashMap<String, Actor>();
+  Pawn myHoveredActor = null;
+  HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();
   LocText myTextToDisplay;
   
   String myName;
