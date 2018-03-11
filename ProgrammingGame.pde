@@ -56,7 +56,7 @@ void setup()
   locManager.LoadLanguage("en-GB");
   
   ourCursor = new Cursor();
-  text("word", width/2, height/2);
+  //text("word", width/2, height/2);
 }
  //<>//
 void Fade(float aFadePercent, color aFadeColor)
@@ -86,6 +86,8 @@ void keyPressed()
     ourMouseInfo = !ourMouseInfo;
     ControlP5.DEBUG = ourMouseInfo; 
   }
+  if(key == 'm' || key == 'M')
+    ourSoundManager.myMaxVolume = 1 - ourSoundManager.myMaxVolume;
     
   if(key == 'q' || key == 'Q')
     ourIsLogging = !ourIsLogging;
@@ -119,6 +121,7 @@ void Update()
   
   gsManager.Update(ourFrameRate.myDeltaTime);
   ourCursor.Update(ourFrameRate.myDeltaTime);
+  ourSoundManager.Update(ourFrameRate.myDeltaTime);
   
   if(showFPS)
     ourFrameRate.Display();

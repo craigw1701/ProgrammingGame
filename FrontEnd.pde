@@ -13,15 +13,14 @@ class FrontEnd extends GameState
     
     textAlign(CENTER, TOP);
     //ellipse(width / 2 + sin(myTimeActive) * 300, height / 2 + cos(myTimeActive) * 200, 20,20);
-    myTextToDisplay.DrawText(width/2, 0);
+    //myTextToDisplay.DrawText(width/2, 0);
     
     super.OnDraw();
   }
   
   void StartNewGame()
   {
-      gsManager.AddToQueue(new Level("Level_001", null));
-      myIsActive = false;
+    SetNextLevel("Level_001", null);
   }
   
   boolean OnTrigger(String aTrigger)

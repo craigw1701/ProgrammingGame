@@ -189,24 +189,6 @@ void Warning(String aWarningMessage)
 void Error(String anErrorMessage)
 {
   println(LogPrefix() + "[ERROR] " + anErrorMessage);
-  PlayErrorSound();
+  ourSoundManager.PlayErrorSound();
   exit();
-}
-
-SoundFile errorSound = null;
-SoundFile successSound = null;
-void PlayErrorSound()
-{
-  if(errorSound == null)
-    errorSound = new SoundFile(this, "Audio/ErrorSound.wav");
-    
-  errorSound.play();
-}
-
-void PlaySuccessSound()
-{
-  if(successSound == null)
-    successSound = new SoundFile(this, "Audio/SuccessSound.wav");
-    
-  successSound.play();
 }

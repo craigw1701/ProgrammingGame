@@ -22,6 +22,14 @@ class GameState
     myFadeOutTime = 1;
     myTimeActive = 0;
     myIsActive = true;
+    
+    myLevelConfig = new LevelConfig(myName);  
+    
+    ConfigData initData = myLevelConfig.GetChild("Init");
+    if(initData.HasData("Music"))
+    {
+      myBackgroundMusic = initData.GetData("Music");
+    }
   }
   
   boolean Init() 
@@ -29,8 +37,7 @@ class GameState
     if(myTimeActive > 0)
       return true;
       
-    LogLn("Init: " + myName);     
-    myLevelConfig = new LevelConfig(myName);    
+    LogLn("Init: " + myName);       
     ConfigData initData = myLevelConfig.GetChild("Init");    
     myTextToDisplay = new LocText(initData.GetData("Text"));
     
@@ -52,10 +59,8 @@ class GameState
       }
     }
     
-    if(initData.HasData("Music"))
-    {
-      ourSoundManager.PlayMusic(initData.GetData("Music"));
-    }
+    if(myBackgroundMusic != null)
+      ourSoundManager.PlayMusic(myBackgroundMusic);
     
     if(initData.HasData("HideCursor"))
     {
@@ -217,7 +222,8 @@ class GameState
   void OnDraw()
   {
     Fade(GetFadePercent(), myFadeColor);
-    ourSoundManager.SetMusicVolume(1 - GetFadePercent());
+    if(ourNeedsToFadeMusic)
+      ourSoundManager.SetMusicVolume(1 - GetFadePercent());
   }
   
   void AddDelayedTrigger(ConfigData aConfig)
@@ -278,6 +284,10 @@ class GameState
       Trigger(aConfig.GetData("Name"));
       hasHandled = true;
     }
+    if(aConfig.HasData("PlayMusic"))
+    {
+      ourSoundManager.PlayMusic(aConfig.GetData("PlayMusic"));
+    }
     
     return OnTrigger(aConfig) || hasHandled;
   }
@@ -318,7 +328,12 @@ class GameState
   
   void SetNextLevel(String aLevelName, String aPreviousLevel)
   {
-    gsManager.AddToQueue(new Level(aLevelName, aPreviousLevel));
+    Level newLevel = new Level(aLevelName, aPreviousLevel);
+    gsManager.AddToQueue(newLevel); 
+    ourNeedsToFadeMusic = false;
+    if(newLevel.myBackgroundMusic != null) //<>//
+      if(!ourSoundManager.myCurrentMusicName.equals(newLevel.myBackgroundMusic))
+        ourNeedsToFadeMusic = true;
     myIsActive = false;
   }
   
@@ -368,4 +383,5 @@ class GameState
   float myTimeInState;
   float myTimeActive;
   boolean myDrawWhileTransitioning;
+  String myBackgroundMusic = null;
 };
