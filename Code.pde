@@ -86,7 +86,7 @@ class Code extends Pawn
   { 
     pushStyle();
     {
-      stroke(255, 0,0);   //<>//
+      stroke(255, 0,0);  
       noFill();
       rectMode(CORNER);
       for(Textfield textField : myTextFields)
@@ -113,13 +113,11 @@ class Code extends Pawn
         if(success)
         {
           textField.setColorBackground(SuccessColor);
-          FireTrigger(myConfig.GetData("OnSuccess"));
         }
         else
         {
           textField.setColorBackground(ErrorColor);
-        }
-        
+        }        
         
         textField.setFocus(false);
         isSuccessful &= success;
@@ -129,12 +127,13 @@ class Code extends Pawn
       if(isSuccessful)
       {
         println("YAY");
-        PlaySuccessSound();
+        FireTrigger(myConfig.GetData("OnSuccess"));
+        ourSoundManager.PlaySuccessSound();
       }
       else
       {
         println("booo!");
-        PlayErrorSound();
+        ourSoundManager.PlayErrorSound();
       }
       
       return true; 

@@ -102,8 +102,10 @@ class Level extends GameState
       myCurrentInstruction = anInstruction;
       myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
       
-      myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0;
-      myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
+      if(myActors.containsKey("PreviousButton")) 
+        myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0;
+      if(myActors.containsKey("NextButton"))
+        myActors.get("NextButton").myIsDisabled = myCurrentInstruction >= myNumberOfInstructions - 1;
   }
   
   void AddDelayedTrigger(ConfigData aConfig)
@@ -126,8 +128,11 @@ class Level extends GameState
       if(myCurrentInstruction >= 0)
         myActors.get(GetInstructionName(myCurrentInstruction)).myIsVisible = false;
         
-      myActors.get("PreviousButton").SetVisible(false);
-      myActors.get("NextButton").SetVisible(false);
+      if(myActors.containsKey("PreviousButton")) 
+        myActors.get("PreviousButton").SetVisible(false);
+      
+      if(myActors.containsKey("NextButton"))
+        myActors.get("NextButton").SetVisible(false);
     }
     return false;
   }
