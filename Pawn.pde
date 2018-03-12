@@ -19,10 +19,29 @@ class Pawn
     if(myConfig.HasData("IsDisabled"))
       myIsDisabled = myConfig.GetData("IsDisabled").equals("true");
       
-    if(myConfig.HasData("IsHidden"))
-      myIsVisible = !myConfig.GetData("IsHidden").equals("true");
+    SetFromConfig(myConfig);
       
     OnInit(); 
+    
+    if(myConfig.HasChild("IfFlagSet"))
+    {
+      ConfigData ifFlagSet = myConfig.GetChild("IfFlagSet");
+      for(String theKey : ifFlagSet.GetChildKeys())
+      {
+        if(ourSaveGame.HasFlagSet(theKey))
+        {
+          SetFromConfig(ifFlagSet.GetChild(theKey));
+        }
+      }
+    }
+  }
+  
+  void SetFromConfig(ConfigData aConfig)
+  {
+    if(aConfig.HasData("IsHidden"))
+      myIsVisible = !aConfig.GetData("IsHidden").equals("true");
+      
+    OnSetFromConfig(aConfig);
   }
   
   boolean Trigger(ConfigData aConfig)
@@ -192,6 +211,7 @@ class Pawn
   
   // Virtual Functions
   void OnInit() {}
+  void OnSetFromConfig(ConfigData aConfig) {}
   boolean OnTrigger(ConfigData aConfig) { return false; }
   boolean OnTrigger(String aTrigger) { return false; }
   void OnUpdate(float aDeltaTime) {}

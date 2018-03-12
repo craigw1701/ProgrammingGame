@@ -9,10 +9,7 @@ class Actor extends Pawn
   }
   
   void OnInit()
-  {    
-    if(myConfig.HasData("OnClick"))
-      myIsSelectable = true;
-    
+  {        
     if(myConfig.HasData("Idle"))
       myCurrentAnimation = myCurrentIdle = new Animation(myConfig.GetData("Idle"));
     else if(myConfig.HasData("Image"))
@@ -48,6 +45,15 @@ class Actor extends Pawn
       
     if(myConfig.HasData("HasOutline"))
       myHasOutline = myConfig.GetData("HasOutline").equals("true");
+  }
+  
+  void OnSetFromConfig(ConfigData aConfig) 
+  {    
+    if(aConfig.HasData("OnClick"))
+    {
+      myOnClickTrigger = aConfig.GetData("OnClick");
+      myIsSelectable = true;
+    }
   }
   
   boolean OnTrigger(ConfigData aConfig)
@@ -96,7 +102,7 @@ class Actor extends Pawn
   
   boolean OnClicked()
   {
-    FireTrigger(myConfig.GetData("OnClick"));
+    FireTrigger(myOnClickTrigger);
     return true;
   } 
     
@@ -163,6 +169,7 @@ class Actor extends Pawn
   Texture myCurrentTexture = null;
   TextInput myTextInput = null;
   
+  String myOnClickTrigger = null;
   color myTint;
   boolean myIsFullScreen;
   boolean myHasOutline = false;

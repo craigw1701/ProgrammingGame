@@ -4,6 +4,7 @@ GameStateManager gsManager = new GameStateManager();
 LocManager locManager = new LocManager();
 AnimationManager ourAnimManager = new AnimationManager();
 SoundManager ourSoundManager = new SoundManager();
+SaveGame ourSaveGame = new SaveGame();
 FrameRate ourFrameRate;
 Cursor ourCursor;
 ControlP5 cp5;
@@ -27,7 +28,6 @@ void FireTrigger(String aTrigger)
   }
   gsManager.myCurrentState.Trigger(aTrigger);
 }
-
 
 void setup()
 {

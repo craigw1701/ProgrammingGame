@@ -68,11 +68,44 @@ class GameState
     }
     
     if(myLevelConfig.HasChild("Triggers"))
-    myTriggers = myLevelConfig.GetChild("Triggers");
+      myTriggers = myLevelConfig.GetChild("Triggers");    
+        
+    boolean hasInit = OnInit();     //<>//
+    SetFromConfig(initData);
     
+    if(initData.HasChild("IfFlagSet"))
+    {
+      ConfigData ifFlagSet = initData.GetChild("IfFlagSet");
+      for(String theKey : ifFlagSet.GetChildKeys())
+      {
+        if(ourSaveGame.HasFlagSet(theKey))
+        {
+          SetFromConfig(ifFlagSet.GetChild(theKey)); //<>//
+        }
+      }
+    }
     
-    return OnInit(); 
+    if(initData.HasChild("IfFlagNotSet"))
+    {
+      ConfigData ifFlagSet = initData.GetChild("IfFlagNotSet");
+      for(String theKey : ifFlagSet.GetChildKeys())
+      {
+        if(!ourSaveGame.HasFlagSet(theKey))
+        {
+          SetFromConfig(ifFlagSet.GetChild(theKey)); //<>//
+        }
+      }
+    }
+    
+    return hasInit;
   }
+  
+  void SetFromConfig(ConfigData aConfig)
+  {
+    OnSetFromConfig(aConfig);
+  }
+  
+  void OnSetFromConfig(ConfigData aConfig) {}
   
   boolean OnInit() 
   {    
@@ -288,6 +321,10 @@ class GameState
     {
       ourSoundManager.PlayMusic(aConfig.GetData("PlayMusic"));
     }
+    if(aConfig.HasData("SetFlag"))
+    {
+      ourSaveGame.SetFlag(aConfig.GetData("SetFlag"));
+    }
     
     return OnTrigger(aConfig) || hasHandled;
   }
@@ -331,7 +368,7 @@ class GameState
     Level newLevel = new Level(aLevelName, aPreviousLevel);
     gsManager.AddToQueue(newLevel); 
     ourNeedsToFadeMusic = false;
-    if(newLevel.myBackgroundMusic != null) //<>//
+    if(newLevel.myBackgroundMusic != null)
       if(!ourSoundManager.myCurrentMusicName.equals(newLevel.myBackgroundMusic))
         ourNeedsToFadeMusic = true;
     myIsActive = false;

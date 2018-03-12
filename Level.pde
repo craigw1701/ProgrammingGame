@@ -50,13 +50,17 @@ class Level extends GameState
     }
     LogLn("myNumberOfInstructions: " + myNumberOfInstructions + " " + myName);
     boolean result = super.OnInit();
-    
-    if(initData.HasData("OnStart"))
-    {
-      FireTrigger(initData.GetData("OnStart"));
-    }
+   
     return result;
   }  
+  
+  void OnSetFromConfig(ConfigData aConfig) 
+  {
+    if(aConfig.HasData("OnStart"))
+    {
+      FireTrigger(aConfig.GetData("OnStart"));
+    }
+  }
   
   boolean OnUpdate(float aDeltaTime)   
   {
@@ -85,8 +89,7 @@ class Level extends GameState
          myTimeline.DebugPrint(0);
         }
       }
-    }
-    
+    }    
     
     return super.OnUpdate(aDeltaTime);
   }
