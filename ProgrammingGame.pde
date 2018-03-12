@@ -87,7 +87,7 @@ void keyPressed()
     ControlP5.DEBUG = ourMouseInfo; 
   }
   if(key == 'm' || key == 'M')
-    ourSoundManager.myMaxVolume = 1 - ourSoundManager.myMaxVolume;
+    ourSoundManager.ToggleMute();
     
   if(key == 'q' || key == 'Q')
     ourIsLogging = !ourIsLogging;

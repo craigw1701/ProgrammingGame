@@ -29,10 +29,14 @@ class SoundManager
     {
       SetMusicVolume(0.1);
     }
-    else if(myDuckTime > 0)
+    else// if(myDuckTime > 0)
     {
       SetMusicVolume(lerp(myCurrentVolume, 1, 0.05));
     }   
+    if(myIsMuted)
+    {
+      SetMusicVolume(0);
+    }
   }
   
   boolean PlayMusic(SoundFile aSound)
@@ -79,6 +83,11 @@ class SoundManager
     mySuccessSound.play();
   }
   
+  void ToggleMute()
+  {
+    myIsMuted = !myIsMuted;
+  }
+  
   String myCurrentMusicName = null;
   SoundFile myCurrentMusic = null;
   HashMap<String, SoundFile> mySounds = new HashMap<String, SoundFile>();
@@ -88,4 +97,5 @@ class SoundManager
   float myMaxVolume = 1;
   float myCurrentVolume = 1;
   float myTargetVolume = 1;
+  boolean myIsMuted = false;
 };
