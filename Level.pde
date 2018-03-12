@@ -100,7 +100,7 @@ class Level extends GameState
         myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(false);
         
       myCurrentInstruction = anInstruction;
-      myActors.get(GetInstructionName(myCurrentInstruction)).SetVisible(true);
+      myActors.get(GetInstructionName(myCurrentInstruction)).StartFadeIn(2);
       
       if(myActors.containsKey("PreviousButton")) 
         myActors.get("PreviousButton").myIsDisabled = myCurrentInstruction == 0;
@@ -123,7 +123,7 @@ class Level extends GameState
   
   boolean OnTrigger(ConfigData aConfig)
   {
-    if(aConfig.HasData("HideInstructions")) //<>//
+    if(aConfig.HasData("HideInstructions"))
     {      
       if(myCurrentInstruction >= 0)
         myActors.get(GetInstructionName(myCurrentInstruction)).myIsVisible = false;

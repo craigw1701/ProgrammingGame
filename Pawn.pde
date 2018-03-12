@@ -33,16 +33,69 @@ class Pawn
       SetVisible(aConfig.GetData("SetVisible").equals("true"));
       handled = true;
     }
+    if(aConfig.HasData("StartFadeIn"))
+    {
+      StartFadeIn(Float.parseFloat(aConfig.GetData("StartFadeIn")));
+      handled = true;
+    }
+    if(aConfig.HasData("StartFadeOut"))
+    {
+      StartFadeOut(Float.parseFloat(aConfig.GetData("StartFadeOut")));
+      handled = true;
+    }
     
     return OnTrigger(aConfig) | handled; 
   }
   
   void Update(float aDeltaTime)
   {
+    if(myIsFadingIn || myIsFadingOut)
+    {
+      if(!myIsVisible)
+      { //<>//
+        SetVisible(true);
+      }
+      
+      float length = myFadeEndTime - myFadeStartTime;
+      float timeSinceStart = ourFrameRate.myLastTime - myFadeStartTime;
+      myFadePercent = timeSinceStart / length;
+      if(myIsFadingOut)
+        myFadePercent = 1 - myFadePercent;
+      
+      if(myFadeEndTime <= ourFrameRate.myLastTime)
+      {
+        if(myIsFadingIn)
+          myFadePercent = 1;
+        
+        if(myIsFadingOut)  
+        {
+          myFadePercent = 0;
+          SetVisible(false);
+        }
+        myIsFadingIn = false;
+        myIsFadingOut = false;
+        
+      }
+    }
+    
     if(!myIsVisible)
       return;
       
     OnUpdate(aDeltaTime);
+  }
+  
+  void StartFadeIn(float aTime)
+  {
+      myFadeStartTime = ourFrameRate.myLastTime;
+      myFadeEndTime = myFadeStartTime + (1000 * aTime);
+      myIsFadingIn = true;
+  }
+  
+  void StartFadeOut(float aTime)
+  {
+      myFadeStartTime = ourFrameRate.myLastTime;
+      myFadeEndTime = myFadeStartTime + (1000 * aTime);
+      myIsFadingOut = true;
   }
   
   void Draw(boolean isSelected)
@@ -50,6 +103,7 @@ class Pawn
     if(!myIsVisible)
       return;
       
+    tint(255, 255 * myFadePercent);
     OnDraw(isSelected);
   }
   
@@ -122,6 +176,11 @@ class Pawn
     if(myIsVisible == aIsVisible)
       return;
       
+    if(!aIsVisible)
+      myIsFadingIn = false;
+    else
+      myIsFadingOut = false;
+    
     LogLn("SetVisible (" + myName + ") - " + aIsVisible);
     myIsVisible = aIsVisible;
     if(myIsVisible && myConfig.HasData("OnShow"))
@@ -149,6 +208,11 @@ class Pawn
   boolean myIsSelectable = false;
   boolean myIsDisabled = false;
   boolean myIsVisible = true;
+  boolean myIsFadingIn = false;
+  boolean myIsFadingOut = false;
+  float myFadeStartTime = -1;
+  float myFadeEndTime = -1;
+  float myFadePercent = 1;
   
   ConfigData myConfig = null;
 };
