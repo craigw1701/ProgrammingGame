@@ -19,7 +19,7 @@ String GetKeyFromLine(String aLine)
   int index = aLine.indexOf("=");
   if(index == -1)
   {
-    Error("FAILED TO GET IDENTIFIER FOR LINE: " + aLine);
+    Error("FAILED TO GET IDENTIFIER FOR LINE: " + aLine); //<>//
     return "";
   }
  
@@ -32,7 +32,7 @@ String GetValueFromLine(String aLine)
   int index = aLine.indexOf("=");
   if(index == -1)
   {
-    Error("FAILED TO GET VALUE FROM LINE: " + aLine);
+    Error("FAILED TO GET VALUE FROM LINE: " + aLine); //<>//
     return "";
   }
   

@@ -33,9 +33,9 @@ void setup()
 {
   ourThis = this;
   ourFrameRate = new FrameRate();
-  //fullScreen();
+  fullScreen();
   //size(1280,800, FX2D);
-  size(1280,800);
+  //size(1280,800);
   font = loadFont("WhiteRabbit-32.vlw");
   textFont(font);
   noStroke();

@@ -1,5 +1,5 @@
 Length = 2
 Frames = {
-	[0] = moth2startanimation\moth2start0005.png
-	[1] = moth2startanimation\moth2start0006.png
+	[0] = moth2startanimation/moth2start0005.png
+	[1] = moth2startanimation/moth2start0006.png
 }
