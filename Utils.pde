@@ -51,6 +51,16 @@ String GetValueFromLine(String aLine)
   return val;
 }
 
+boolean GetBoolFromLine(String aLine)
+{
+  return GetValueFromLine(aLine).equals("true");
+}
+
+boolean IsTrue(String aString)
+{
+  return aString.equals("true");
+}
+
 boolean IsLineAComment(String aLine)
 {
   return aLine.indexOf("//") == 0;
@@ -158,6 +168,16 @@ PVector GetRelativeSize(PImage aSourceImage)
   return new PVector(aSourceImage.width / ourSourceResolution.x * width, aSourceImage.height / ourSourceResolution.y * height);
 }
 
+PVector GetPercentToScreen(PVector aPos)
+{
+  return new PVector(aPos.x * width, aPos.y * height);
+}
+
+PVector GetScreenToPercent(PVector aPos)
+{
+  return new PVector(aPos.x / width, aPos.y / height);
+}
+
 String LogPrefix()
 {
   return "[" + ourFrameRate.myTotalFrames + "] ";
@@ -188,7 +208,7 @@ void Warning(String aWarningMessage)
 
 void Error(String anErrorMessage)
 {
-  println(LogPrefix() + "[ERROR] " + anErrorMessage);
+  println(LogPrefix() + "[ERROR] " + anErrorMessage); //<>//
   ourSoundManager.PlayErrorSound();
   exit();
 }

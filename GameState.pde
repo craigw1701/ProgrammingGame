@@ -70,7 +70,7 @@ class GameState
     if(myLevelConfig.HasChild("Triggers"))
       myTriggers = myLevelConfig.GetChild("Triggers");    
         
-    boolean hasInit = OnInit();     //<>//
+    boolean hasInit = OnInit();    
     SetFromConfig(initData);
     
     if(initData.HasChild("IfFlagSet"))
@@ -205,7 +205,7 @@ class GameState
       }
       
       textAlign(LEFT, BOTTOM);
-      text("Hovered Actor: " + ((myHoveredActor == null) ? "null" : myHoveredActor.myName), 0, height);
+      text("Selected Actor: " + ((mySelectedActor == null) ? "null" : mySelectedActor.myName), 0, height);
       
       popStyle();
     }
@@ -325,6 +325,17 @@ class GameState
     {
       ourSaveGame.SetFlag(aConfig.GetData("SetFlag"));
     }
+    if(aConfig.HasChild("Flags"))
+    {
+      ConfigData flags = aConfig.GetChild("Flags");
+      for(String flag : flags.myData.keySet())
+      {
+        if(IsTrue(flags.GetData(flag)))
+          ourSaveGame.SetFlag(flag);          
+        else
+          ourSaveGame.ClearFlag(flag);
+      }
+    }
     
     return OnTrigger(aConfig) || hasHandled;
   }
@@ -359,6 +370,14 @@ class GameState
     if(myHoveredActor != null)
     {
       return myHoveredActor.Clicked();
+    }
+    for(Pawn actor : myActors.values())
+    {
+      if(actor.IsMouseOver())
+      {
+        mySelectedActor = actor;
+        break;
+      }
     }
     return false;
   }
@@ -405,6 +424,7 @@ class GameState
   ConfigData myTriggers;
   Texture myBackground = null;
   Pawn myHoveredActor = null;
+  Pawn mySelectedActor = null;
   HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();  
   ArrayList<String> myControlNames = new ArrayList<String>();
   LocText myTextToDisplay;

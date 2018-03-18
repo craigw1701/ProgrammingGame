@@ -13,11 +13,13 @@ class ConfigData
     
     int childDepth = 0;
     String line = null;
+    int lineNumber = 0;
     while(true)
     {
       try
       {
         line = aReader.readLine();
+        lineNumber++;
       }
       catch(IOException e)
       {

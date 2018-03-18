@@ -7,6 +7,11 @@ class SaveGame
     myFlags.add(aFlagName);
   }
   
+  void ClearFlag(String aFlagName)
+  {
+    myFlags.remove(aFlagName);  
+  }
+  
   boolean HasFlagSet(String aFlagName)
   {
     return myFlags.contains(aFlagName);
