@@ -12,6 +12,9 @@ class FrameRate
       myAverageTimes.remove(0);
       
     myAverageTimes.append(myDeltaTime);
+    
+    if(myIsPaused)
+      myDeltaTime = 0;
   }
   
   void Display()
@@ -33,4 +36,5 @@ class FrameRate
   float myDeltaTime = 0;
   FloatList myAverageTimes = new FloatList();
   int myTotalFrames = 0;
+  boolean myIsPaused = false;
 }

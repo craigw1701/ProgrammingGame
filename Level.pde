@@ -211,7 +211,13 @@ class Level extends GameState
      {
        SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"), null);
        return true;
-     }
+     }    
+     else if(aKey == 'r' || aKey == 'R')
+     {
+       SetNextLevel(myName, null);
+       return true;
+     }      
+     
      for(Pawn actor : myActors.values())
      {
        if(actor.ProcessInput(aKey))

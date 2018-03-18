@@ -82,13 +82,63 @@ class Actor extends Pawn
       handled = true;
     }
     
+    if(aConfig.HasChild("MovePath"))
+    {
+      ConfigData path = aConfig.GetChild("MovePath");
+      int index = 0;
+      myMovePath = new ArrayList<PVector>();
+      while(true)
+      {
+        if(!path.HasData(str(index)))
+          break;
+          
+        myMovePath.add(GetVector2FromLine(path.GetData(str(index))));
+        index++;
+      }
+      if(index % 4 != 0)
+      {
+        Error("Path must be in mutliples of 4 for the Bezier curves to work, we have " + index + " points");
+        return false;
+      }
+      myTravelPercent = 0;
+      myPathSubSection = 0;
+      myRotation = 0;
+      handled = true;
+    }
+    
     return handled;
   }
   
   void OnUpdate(float aDeltaTime)
   {      
-    myPosition.x += myMoveDelta.x * aDeltaTime;
-    myPosition.y += myMoveDelta.y * aDeltaTime;
+    //myPosition.x += myMoveDelta.x * aDeltaTime;
+    //myPosition.y += myMoveDelta.y * aDeltaTime;
+    
+    if(myMovePath != null)
+    {
+      myTravelPercent += (0.5 * aDeltaTime);
+      if(myTravelPercent > 1.0)
+      {
+        myTravelPercent = 0;
+        myPathSubSection++;
+        if(myMovePath.size() / 4 <= myPathSubSection)
+        {
+          myTravelPercent = 1;
+          myPathSubSection--;
+          //myRotation = 0;
+        }
+      }
+      
+      if(myMovePath != null)
+      {
+        PVector p1 = myMovePath.get(myPathSubSection * 4 + 0);
+        PVector p2 = myMovePath.get(myPathSubSection * 4 + 1);
+        PVector p3 = myMovePath.get(myPathSubSection * 4 + 2);
+        PVector p4 = myMovePath.get(myPathSubSection * 4 + 3);
+        myPosition.x = bezierPoint(p1.x, p2.x, p3.x, p4.x, myTravelPercent);
+        myPosition.y = bezierPoint(p1.y, p2.y, p3.y, p4.y, myTravelPercent);        
+      }
+    }
       
     if(myCurrentAnimation != null)
     {
@@ -113,6 +163,62 @@ class Actor extends Pawn
         else
           image(anImage, myPosition.x, myPosition.y, mySize.x + anOutlineThickness, mySize.y + anOutlineThickness);
   }
+   
+  boolean OnProcessInput(char aKey)
+  { 
+    if(gsManager.myCurrentState.mySelectedActor != this)
+      return false;
+    
+    if(myMovePath == null)
+      return false;
+      
+    if(aKey == '+')
+     {
+       myPathIndex = (myPathIndex + 1) % myMovePath.size();
+       if(myPathIndex != 0 && myPathIndex % 4 == 0)
+         myPathIndex = (myPathIndex + 2) % myMovePath.size();
+       println("index: " + myPathIndex);
+     }
+     else if(aKey == CODED)
+     {
+       PVector point = myMovePath.get(myPathIndex);
+       if(keyCode == LEFT)
+         point.x--;
+       if(keyCode == RIGHT)
+         point.x++;
+       if(keyCode == UP)
+         point.y--;
+       if(keyCode == DOWN)
+         point.y++;
+         
+       if(myPathIndex % 4 == 3 && myPathIndex < myMovePath.size()-1)
+       {
+         PVector point2 = myMovePath.get(myPathIndex+1);
+         point2.x = point.x;
+         point2.y = point.y;
+       }
+       if(myPathIndex % 4 == 2 && myPathIndex < myMovePath.size()-2)
+       {
+         PVector midPoint = myMovePath.get(myPathIndex+1);
+         PVector point2 = myMovePath.get(myPathIndex+3);
+         
+         point2.x = midPoint.x + (midPoint.x - point.x);
+         point2.y = midPoint.y + (midPoint.y - point.y);         
+       }
+         
+       //println("Index: " + myPathIndex + " - (" + point.x + ", " + point.y + ")");
+     }
+     else if(aKey == 'm' || aKey == 'M')
+     {
+       for(int i = 0; i < myMovePath.size(); i++)
+       {
+         PVector p = GetScreenToPercent(myMovePath.get(i));
+         println(i + " = (" + p.x + ", " + p.y + ")");
+       }
+     }
+      
+    return false;
+  }    
   
   void OnDraw(boolean isSelected)
   {           
@@ -150,8 +256,26 @@ class Actor extends Pawn
       }
     }
     
+    pushMatrix();
+    
+    if(myMovePath != null)
+    {
+        PVector p1 = myMovePath.get(myPathSubSection * 4 + 0);
+        PVector p2 = myMovePath.get(myPathSubSection * 4 + 1);
+        PVector p3 = myMovePath.get(myPathSubSection * 4 + 2);
+        PVector p4 = myMovePath.get(myPathSubSection * 4 + 3);
+        float tx = bezierTangent(p1.x, p2.x, p3.x, p4.x, myTravelPercent);
+        float ty = bezierTangent(p1.y, p2.y, p3.y, p4.y, myTravelPercent);
+        float a = atan2(ty, tx);
+        translate(myPosition.x, myPosition.y);
+        float newRotation = (a + PI/2);
+        myRotation = lerp(myRotation, newRotation, 0.1);
+        //println(newRotation + ":" + myRotation);
+        rotate(newRotation);
+        translate(-myPosition.x, -myPosition.y);
+    }
     DrawInternal(currentTexture, 0);
-      
+    popMatrix();      
     noTint();
   }
   
@@ -161,6 +285,23 @@ class Actor extends Pawn
       {
         if(myCurrentAnimation != null)
           myCurrentAnimation.DrawDebug();
+      }
+      
+      if(myMovePath != null)
+      {
+        stroke(255, 0, 0, 128);
+        noFill();
+        for(int i = 0; i < myMovePath.size() / 4; i++)
+        {
+          PVector p1 = myMovePath.get(i * 4 + 0);
+          PVector p2 = myMovePath.get(i * 4 + 1);
+          PVector p3 = myMovePath.get(i * 4 + 2);
+          PVector p4 = myMovePath.get(i * 4 + 3);
+          bezier(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+        }
+        
+        fill(0, 255, 0, 128);
+        ellipse(myMovePath.get(myPathIndex).x, myMovePath.get(myPathIndex).y, 10, 10);
       }
   }
   
@@ -175,4 +316,13 @@ class Actor extends Pawn
   boolean myHasOutline = false;
   
   PVector myMoveDelta = new PVector(0,0);
+  
+  ArrayList<PVector> myMovePath = null;
+  
+  float myTravelPercent = 0;
+  int myPathSubSection = 0;
+  float myRotation = 0;
+  
+  // DEBUG
+  int myPathIndex = 0;
 };
