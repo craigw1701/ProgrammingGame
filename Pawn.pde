@@ -10,18 +10,23 @@ class Pawn
   void Init(ConfigData aConfig)
   {
     myConfig = aConfig;
-         
-    if(myConfig.HasData("StartPosition"))
-      myPosition = GetVector2FromLine(aConfig.GetData("StartPosition"));
-    else
-      myPosition = new PVector(0,0);
-      
-    if(myConfig.HasData("IsDisabled"))
-      myIsDisabled = myConfig.GetData("IsDisabled").equals("true");
       
     SetFromConfig(myConfig);
       
     OnInit(); 
+    
+    if(myConfig.HasChild("IfFlags"))
+    {
+      ConfigData ifFlags = myConfig.GetChild("IfFlags");
+      for(String theKey : ifFlags.GetChildKeys())
+      {
+        ConfigData action = ifFlags.GetChild(theKey); 
+        if(CheckFlags(action))
+        {
+          SetFromConfig(action);          
+        }
+      }
+    }
     
     if(myConfig.HasChild("IfFlagSet"))
     {
@@ -34,12 +39,29 @@ class Pawn
         }
       }
     }
+    if(myConfig.HasChild("IfFlagNotSet"))
+    {
+      ConfigData ifFlagNotSet = myConfig.GetChild("IfFlagNotSet");
+      for(String theKey : ifFlagNotSet.GetChildKeys())
+      {
+        if(!ourSaveGame.HasFlagSet(theKey))
+        {
+          SetFromConfig(ifFlagNotSet.GetChild(theKey));
+        }
+      }
+    }
   }
   
   void SetFromConfig(ConfigData aConfig)
   {
     if(aConfig.HasData("IsHidden"))
-      myIsVisible = !aConfig.GetData("IsHidden").equals("true");
+      myIsVisible = !aConfig.GetData("IsHidden").equals("true");      
+         
+    if(aConfig.HasData("StartPosition"))
+      myPosition = GetVector2FromLine(aConfig.GetData("StartPosition"));
+      
+    if(myConfig.HasData("IsDisabled"))
+      myIsDisabled = myConfig.GetData("IsDisabled").equals("true");
       
     OnSetFromConfig(aConfig);
   }
@@ -71,7 +93,7 @@ class Pawn
     if(myIsFadingIn || myIsFadingOut)
     {
       if(!myIsVisible)
-      { //<>//
+      { //<>// //<>//
         SetVisible(true);
       }
       
