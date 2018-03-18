@@ -32,13 +32,31 @@ class GameState
     }
   }
   
+  void UpdateFlags(ConfigData aConfig)
+  {
+    if(aConfig.HasChild("UpdateFlags"))
+    {
+      ConfigData ifFlags = aConfig.GetChild("UpdateFlags");
+      for(String theKey : ifFlags.GetChildKeys())
+      {
+        ConfigData action = ifFlags.GetChild(theKey); 
+        if(CheckFlags(action))
+        {
+          ourSaveGame.UpdateFlags(aConfig.GetChild("Flags"));          
+        }
+      }
+    }
+  }
+  
   boolean Init() 
   { 
     if(myTimeActive > 0)
       return true;
       
     LogLn("Init: " + myName);       
-    ConfigData initData = myLevelConfig.GetChild("Init");    
+    ConfigData initData = myLevelConfig.GetChild("Init"); 
+    UpdateFlags(initData);    
+    
     myTextToDisplay = new LocText(initData.GetData("Text"));
     
     if(initData.HasData("Background"))
@@ -80,19 +98,19 @@ class GameState
       {
         if(ourSaveGame.HasFlagSet(theKey))
         {
-          SetFromConfig(ifFlagSet.GetChild(theKey)); //<>//
+          SetFromConfig(ifFlagSet.GetChild(theKey));
         }
       }
     }
     
     if(initData.HasChild("IfFlagNotSet"))
     {
-      ConfigData ifFlagSet = initData.GetChild("IfFlagNotSet");
-      for(String theKey : ifFlagSet.GetChildKeys())
+      ConfigData ifFlagNotSet = initData.GetChild("IfFlagNotSet");
+      for(String theKey : ifFlagNotSet.GetChildKeys())
       {
         if(!ourSaveGame.HasFlagSet(theKey))
         {
-          SetFromConfig(ifFlagSet.GetChild(theKey)); //<>//
+          SetFromConfig(ifFlagNotSet.GetChild(theKey));
         }
       }
     }
@@ -327,14 +345,7 @@ class GameState
     }
     if(aConfig.HasChild("Flags"))
     {
-      ConfigData flags = aConfig.GetChild("Flags");
-      for(String flag : flags.myData.keySet())
-      {
-        if(IsTrue(flags.GetData(flag)))
-          ourSaveGame.SetFlag(flag);          
-        else
-          ourSaveGame.ClearFlag(flag);
-      }
+      ourSaveGame.UpdateFlags(aConfig.GetChild("Flags"));
     }
     
     return OnTrigger(aConfig) || hasHandled;

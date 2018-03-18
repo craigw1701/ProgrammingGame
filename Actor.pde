@@ -54,6 +54,12 @@ class Actor extends Pawn
       myOnClickTrigger = aConfig.GetData("OnClick");
       myIsSelectable = true;
     }
+    if(aConfig.HasData("StartRotation"))
+    {
+      float degrees = Float.parseFloat(aConfig.GetData("StartRotation"));
+      myRotation = radians(degrees);
+      println("Degrees: " + degrees + ", Radians: " + myRotation);
+    }
   }
   
   boolean OnTrigger(ConfigData aConfig)
@@ -267,13 +273,13 @@ class Actor extends Pawn
         float tx = bezierTangent(p1.x, p2.x, p3.x, p4.x, myTravelPercent);
         float ty = bezierTangent(p1.y, p2.y, p3.y, p4.y, myTravelPercent);
         float a = atan2(ty, tx);
-        translate(myPosition.x, myPosition.y);
         float newRotation = (a + PI/2);
-        myRotation = lerp(myRotation, newRotation, 0.1);
-        //println(newRotation + ":" + myRotation);
-        rotate(newRotation);
-        translate(-myPosition.x, -myPosition.y);
+        myRotation = newRotation;//lerp(myRotation, newRotation, 0.1);
     }
+    
+    translate(myPosition.x, myPosition.y);
+    rotate(myRotation);
+    translate(-myPosition.x, -myPosition.y);
     DrawInternal(currentTexture, 0);
     popMatrix();      
     noTint();
