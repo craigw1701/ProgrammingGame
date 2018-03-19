@@ -49,6 +49,11 @@ class Actor extends Pawn
       myCurrentTexture = new Texture(aConfig.GetData("Image"), false);
       changeScale = true;
     }
+    
+    if(aConfig.HasData("GlowImage"))
+    {
+      myGlowTexture = new Texture(aConfig.GetData("GlowImage"), false);
+    }
          
     if(aConfig.HasData("Scale"))
     {
@@ -255,17 +260,20 @@ class Actor extends Pawn
     
     if(isSelected && myIsSelectable)
     {
-      if(myTint == color(255, 255, 255, 255))
+      if(myGlowTexture == null)
       {
-        PImage texture = currentTexture.copy();
-        texture.filter(THRESHOLD, 0.0);
-        DrawInternal(texture, 10);
-        if(myHasOutline == false)
-          return;
-      }
-      else
-      {
-        tint(myTint);
+        if(myTint == color(255, 255, 255, 255))
+        {
+          PImage texture = currentTexture.copy();
+          texture.filter(THRESHOLD, 0.0);
+          DrawInternal(texture, 10);
+          if(myHasOutline == false)
+            return;
+        }
+        else
+        {
+          tint(myTint);
+        }
       }
     }
     
@@ -288,6 +296,11 @@ class Actor extends Pawn
     rotate(myRotation);
     translate(-myPosition.x, -myPosition.y);
     DrawInternal(currentTexture, 0);
+    
+    if(myGlowTexture != null)
+      if(isSelected && myIsSelectable)
+        DrawInternal(myGlowTexture.GetTexture(), 10);
+    
     popMatrix();      
     noTint();
   }
@@ -322,6 +335,7 @@ class Actor extends Pawn
   Animation myCurrentIdle;
   Texture myCurrentTexture = null;
   TextInput myTextInput = null;
+  Texture myGlowTexture = null;
   
   String myOnClickTrigger = null;
   color myTint;
