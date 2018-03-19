@@ -42,7 +42,7 @@ class GameState
         ConfigData action = ifFlags.GetChild(theKey); 
         if(CheckFlags(action))
         {
-          ourSaveGame.UpdateFlags(aConfig.GetChild("Flags"));          
+          ourSaveGame.UpdateFlags(action.GetChild("Flags"));          
         }
       }
     }
@@ -181,9 +181,14 @@ class GameState
     
     if(aState == GameStateState.STOPPED)
     {
+      ConfigData init = myLevelConfig.GetChild("Init");
+      if(init.HasData("OnExit"))
+      {
+        FireTrigger(init.GetData("OnExit"));
+      }
       for(String name : myControlNames)
       {
-        cp5.remove(name); //<>//
+        cp5.remove(name);
       }
       myControlNames.clear();
     }

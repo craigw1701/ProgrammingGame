@@ -9,30 +9,7 @@ class Actor extends Pawn
   }
   
   void OnInit()
-  {        
-    if(myConfig.HasData("Idle"))
-      myCurrentAnimation = myCurrentIdle = new Animation(myConfig.GetData("Idle"));
-    else if(myConfig.HasData("Image"))
-      myCurrentTexture = new Texture(myConfig.GetData("Image"), false);
-      
-    if(myConfig.HasData("Scale"))
-    {
-      mySize = GetVector2FromLine(myConfig.GetData("Scale"));
-    }
-    else
-    {
-      PImage texture = null;
-      if(myCurrentTexture != null)
-        texture = myCurrentTexture.GetTexture();
-      else if(myCurrentAnimation != null)
-        texture = myCurrentAnimation.GetCurrentImage();
-      
-      if(texture != null)
-        mySize = GetRelativeSize(new PVector(texture.width, texture.height));
-      else
-        mySize = new PVector(400,400);
-    }
-      
+  {                  
     if(myConfig.HasData("Tint"))
       myTint = GetColorFromLine(myConfig.GetData("Tint"));
     else
@@ -59,6 +36,36 @@ class Actor extends Pawn
       float degrees = Float.parseFloat(aConfig.GetData("StartRotation"));
       myRotation = radians(degrees);
       println("Degrees: " + degrees + ", Radians: " + myRotation);
+    }
+    
+    boolean changeScale = false;
+    if(aConfig.HasData("Idle"))
+    {
+      myCurrentAnimation = myCurrentIdle = new Animation(aConfig.GetData("Idle"));
+      changeScale = true;
+    }
+    else if(aConfig.HasData("Image"))
+    {
+      myCurrentTexture = new Texture(aConfig.GetData("Image"), false);
+      changeScale = true;
+    }
+         
+    if(aConfig.HasData("Scale"))
+    {
+      mySize = GetVector2FromLine(aConfig.GetData("Scale"));
+    }
+    else if(changeScale)
+    {
+      PImage texture = null;
+      if(myCurrentTexture != null)
+        texture = myCurrentTexture.GetTexture();
+      else if(myCurrentAnimation != null)
+        texture = myCurrentAnimation.GetCurrentImage();
+      
+      if(texture != null)
+        mySize = GetRelativeSize(new PVector(texture.width, texture.height));
+      else
+        mySize = new PVector(400,400);
     }
   }
   
