@@ -29,7 +29,7 @@ void FireTrigger(String aTrigger)
   gsManager.myCurrentState.Trigger(aTrigger);
 }
 
-void setup()
+void setup()  
 {
   ourThis = this;
   ourFrameRate = new FrameRate();
@@ -94,6 +94,9 @@ void keyPressed()
     
   if(key == 'p' || key == 'P')
     ourFrameRate.myIsPaused = !ourFrameRate.myIsPaused;
+    
+  if(key == 'n' || key == 'N')
+    ourSaveGame.NewGame();
     
   key = 0;
   keyCode = 0;

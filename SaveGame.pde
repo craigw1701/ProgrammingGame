@@ -28,13 +28,13 @@ class SaveGame
 {
   void SetFlag(String aFlagName)
   {
-    println("SetFlag: " + aFlagName);
+    LogLn("SetFlag: " + aFlagName);
     myFlags.add(aFlagName);
   }
   
   void ClearFlag(String aFlagName)
   {
-    println("ClearFlag: " + aFlagName);
+    LogLn("ClearFlag: " + aFlagName);
     myFlags.remove(aFlagName);  
   }
   
@@ -54,5 +54,21 @@ class SaveGame
     return myFlags.contains(aFlagName);
   }
   
+  void NewGame()
+  {
+    myFlags.clear();
+  }
+  
+  void PringFlags()
+  {
+    LogLn("Flags: ");
+    for(Object flag : myFlags.toArray())
+    {
+      LogLn(" - " + flag);
+    }
+    LogLn();
+  }
+  
+  // Variables
   HashSet<String> myFlags = new HashSet<String>();
 };

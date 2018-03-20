@@ -53,8 +53,9 @@ class PauseMenu extends GameState
     OnDraw();
     if(myState == GameStateState.RUNNING)
     {
-      fill(255, 255, 255, 255);
-      rect(width/2, height/2, 400, 300);
+      fill(248, 236, 194, 255);
+      PVector size = GetPercentToScreen(new PVector(0.4, 0.375));
+      rect(width/2, height/2, size.x, size.y);
       //fill(0);
       //text("Pause", width/2, height/2);      
       for(Pawn actor : myActors.values())

@@ -167,9 +167,9 @@ class Level extends GameState
       }
       return true;
     }
-    else
+    else if(aTrigger.equals("TRIGGER_RELOAD_LEVEL"))
     {
-      
+      ReloadLevel();
     }
     
     return false;
@@ -214,7 +214,7 @@ class Level extends GameState
      }    
      else if(aKey == 'r' || aKey == 'R')
      {
-       SetNextLevel(myName, null);
+       ReloadLevel();
        return true;
      }      
      

@@ -20,6 +20,7 @@ class FrontEnd extends GameState
   
   void StartNewGame()
   {
+    ourSaveGame.NewGame();
     SetNextLevel("Level_001", null);
   }
   
