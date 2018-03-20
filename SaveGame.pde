@@ -54,5 +54,21 @@ class SaveGame
     return myFlags.contains(aFlagName);
   }
   
+  void NewGame()
+  {
+    myFlags.clear();
+  }
+  
+  void PringFlags()
+  {
+    println("Flags: ");
+    for(Object flag : myFlags.toArray())
+    {
+      println(" - " + flag);
+    }
+    println();
+  }
+  
+  // Variables
   HashSet<String> myFlags = new HashSet<String>();
 };
