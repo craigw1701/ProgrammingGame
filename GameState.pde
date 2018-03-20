@@ -30,6 +30,8 @@ class GameState
     {
       myBackgroundMusic = initData.GetData("Music");
     }
+    
+    ourSaveGame.PringFlags();
   }
   
   void UpdateFlags(ConfigData aConfig)
@@ -396,6 +398,11 @@ class GameState
       }
     }
     return false;
+  }
+  
+  void ReloadLevel()
+  {
+       SetNextLevel(myName, null);
   }
   
   void SetNextLevel(String aLevelName, String aPreviousLevel)

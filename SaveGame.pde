@@ -28,13 +28,13 @@ class SaveGame
 {
   void SetFlag(String aFlagName)
   {
-    println("SetFlag: " + aFlagName);
+    LogLn("SetFlag: " + aFlagName);
     myFlags.add(aFlagName);
   }
   
   void ClearFlag(String aFlagName)
   {
-    println("ClearFlag: " + aFlagName);
+    LogLn("ClearFlag: " + aFlagName);
     myFlags.remove(aFlagName);  
   }
   
@@ -61,12 +61,12 @@ class SaveGame
   
   void PringFlags()
   {
-    println("Flags: ");
+    LogLn("Flags: ");
     for(Object flag : myFlags.toArray())
     {
-      println(" - " + flag);
+      LogLn(" - " + flag);
     }
-    println();
+    LogLn();
   }
   
   // Variables
