@@ -8,13 +8,13 @@ class Code extends Pawn
   
   String GetTextFieldName(int anIndex)
   {
-    return gsManager.myCurrentState.myName + "_TextField_" + anIndex;
+    return gsManager.myCurrentState.myName + "_" + myName + "_TextField_" + anIndex;
   }
   
   // Helpers
   void CreateTextLabel(ConfigData aConfig)
   {
-    Textlabel textLabel = gsManager.myCurrentState.AddTextLabel(gsManager.myCurrentState.myName + "_TextLabel_" + myCodeParts);
+    Textlabel textLabel = gsManager.myCurrentState.AddTextLabel(gsManager.myCurrentState.myName + "_" + myName +  "_TextLabel_" + myCodeParts);
     textLabel.setLineHeight(32);
     Label label = textLabel.get();
     textLabel.align(0,16,0,16);
@@ -31,6 +31,7 @@ class Code extends Pawn
   {
     Textfield textField = gsManager.myCurrentState.AddTextField(GetTextFieldName(myCodeParts));
     textField.setPosition(myCurrentPosition.x, myCurrentPosition.y);
+    textField.setText(aConfig.GetData("DefaultValue"));
     if(aConfig.GetData("Type").equals("Integer"))
       textField.setInputFilter(ControlP5.INTEGER);
     textField.align(ControlP5.CENTER, ControlP5.CENTER, ControlP5.CENTER, ControlP5.CENTER);
@@ -45,14 +46,26 @@ class Code extends Pawn
   // Overridden Functions
   void OnInit() 
   {
-    myCurrentPosition = myPosition.copy();
     ConfigData code = myConfig.GetChild("Code");
+    SetupCodeParts(code);
+    
+    OnVisibilityChanged();
+  }  
+  
+  void SetupCodeParts(ConfigData aConfig)
+  {
+    myCurrentPosition = myPosition.copy();
+    myCodeParts = 0;
+    myTextFields.clear();
+    myTextFieldMap.clear();
+    myTextLabels.clear();
+    
     while(true)
     {
-      if(!code.HasChild(str(myCodeParts)))
+      if(!aConfig.HasChild(str(myCodeParts)))
         break;
         
-      ConfigData part = code.GetChild(str(myCodeParts));
+      ConfigData part = aConfig.GetChild(str(myCodeParts));
       
       if(part.HasChild("TextLabel"))
         CreateTextLabel(part.GetChild("TextLabel"));
@@ -61,9 +74,7 @@ class Code extends Pawn
       
       myCodeParts++;
     }
-    
-    OnVisibilityChanged();
-  }  
+  }
   
   void OnVisibilityChanged()
   {
@@ -101,6 +112,18 @@ class Code extends Pawn
   boolean OnTrigger(ConfigData aConfig) { return false; }
   boolean OnTrigger(String aTrigger)
   {
+    if(myIsVisible == false)
+      return false;
+      
+    boolean handled = false;
+    if(aTrigger.equals("OnReset"))
+    {
+      ConfigData code = myConfig.GetChild("Code");
+      SetupCodeParts(code);
+      //handled = true;
+      myIsCorrect = false;
+    }
+      
     if(aTrigger.equals("OnSubmit"))
     {
       boolean isSuccessful = true;
@@ -123,22 +146,26 @@ class Code extends Pawn
         isSuccessful &= success;
       }
       myCurrentFocus = null;
+      myIsCorrect = isSuccessful;
       
-      if(isSuccessful)
-      {
-        println("YAY");
-        FireTrigger(myConfig.GetData("OnSuccess"));
-        ourSoundManager.PlaySuccessSound();
-      }
-      else
-      {
-        println("booo!");
-        ourSoundManager.PlayErrorSound();
-      }
-      
-      return true; 
+      //handled = true;
     }
-    return false; 
+    return handled; 
+  }
+  
+  void OnSubmit(boolean aIsCorrect)
+  {
+    if(aIsCorrect)
+    {
+      println("YAY");
+      FireTrigger(myConfig.GetData("OnSuccess"));
+      ourSoundManager.PlaySuccessSound();
+    }
+    else
+    {
+      println("booo!");
+      ourSoundManager.PlayErrorSound();
+    }
   }
     
   void OnUpdate(float aDeltaTime) 
@@ -220,6 +247,7 @@ class Code extends Pawn
   int myCurrentLineHeight = 0;
   int myCodeParts = 0;
   int myMaxValue = 12;
+  boolean myIsCorrect = false;
   Textfield myCurrentFocus = null;
   HashMap<String, Textfield> myTextFieldMap = new HashMap<String, Textfield>(); 
   ArrayList<Textfield> myTextFields = new ArrayList<Textfield>();

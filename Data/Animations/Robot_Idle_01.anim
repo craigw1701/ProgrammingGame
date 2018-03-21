@@ -1,0 +1,19 @@
+Length = 16
+Frames = {
+	[0] = Robot_Idle_1/Robot_Idle0000.png
+	[1] = Robot_Idle_1/Robot_Idle0001.png
+	[2] = Robot_Idle_1/Robot_Idle0002.png
+	[3] = Robot_Idle_1/Robot_Idle0003.png
+	[4] = Robot_Idle_1/Robot_Idle0004.png
+	[5] = Robot_Idle_1/Robot_Idle0005.png
+	[6] = Robot_Idle_1/Robot_Idle0006.png
+	[7] = Robot_Idle_1/Robot_Idle0007.png
+	[8] = Robot_Idle_1/Robot_Idle0008.png
+	[9] = Robot_Idle_1/Robot_Idle0009.png
+	[10] = Robot_Idle_1/Robot_Idle0010.png
+	[11] = Robot_Idle_1/Robot_Idle0011.png
+	[12] = Robot_Idle_1/Robot_Idle0012.png
+	[13] = Robot_Idle_1/Robot_Idle0013.png
+	[14] = Robot_Idle_1/Robot_Idle0014.png
+	[15] = Robot_Idle_1/Robot_Idle0015.png
+}

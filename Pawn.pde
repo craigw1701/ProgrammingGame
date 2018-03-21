@@ -1,12 +1,17 @@
 PVector ourBoundingBoxBuffer = new PVector(width * 0.1, height * 0.1);
 
-class Pawn
+class Pawn implements Comparable<Pawn> 
 {
   Pawn(String aName)
   {
     myName = aName;
   }
   
+  public int compareTo(Pawn aPawn)
+  {
+    return constrain(myDrawLayer - aPawn.myDrawLayer, -1, 1); 
+  }
+    
   void Init(ConfigData aConfig)
   {
     myConfig = aConfig;
@@ -63,6 +68,9 @@ class Pawn
     if(myConfig.HasData("IsDisabled"))
       myIsDisabled = myConfig.GetData("IsDisabled").equals("true");
       
+    if(aConfig.HasData("DrawLayer"))
+      myDrawLayer = Integer.parseInt(aConfig.GetData("DrawLayer"));
+      
     OnSetFromConfig(aConfig);
   }
   
@@ -83,6 +91,11 @@ class Pawn
     {
       StartFadeOut(Float.parseFloat(aConfig.GetData("StartFadeOut")));
       handled = true;
+    }
+    
+    if(aConfig.HasData("SetPosition"))
+    {
+      myPosition = GetVector2FromLine(aConfig.GetData("SetPosition"));
     }
     
     return OnTrigger(aConfig) | handled; 
@@ -255,6 +268,7 @@ class Pawn
   float myFadeStartTime = -1;
   float myFadeEndTime = -1;
   float myFadePercent = 1;
+  int myDrawLayer = 0;
   
   ConfigData myConfig = null;
 };

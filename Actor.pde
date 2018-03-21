@@ -35,7 +35,7 @@ class Actor extends Pawn
     {
       float degrees = Float.parseFloat(aConfig.GetData("StartRotation"));
       myRotation = radians(degrees);
-      println("Degrees: " + degrees + ", Radians: " + myRotation);
+      //println("Degrees: " + degrees + ", Radians: " + myRotation);
     }
     
     boolean changeScale = false;
@@ -89,6 +89,12 @@ class Actor extends Pawn
       myCurrentAnimation.myIsLooping = false;
       handled = true;
     }
+    if(aConfig.HasData("SetOneShotOffset"))
+    {
+      myCurrentAnimation.myOffset = GetVector2FromLine(aConfig.GetData("SetOneShotOffset"));
+      handled = true;
+    }
+    
     if(aConfig.HasData("PlayIdle"))
     {
       myCurrentIdle = new Animation(aConfig.GetData("PlayIdle"));
@@ -179,7 +185,11 @@ class Actor extends Pawn
     if(myIsFullScreen)
           image(anImage, width/2, height/2, width + anOutlineThickness, height + anOutlineThickness);
         else
-          image(anImage, myPosition.x, myPosition.y, mySize.x + anOutlineThickness, mySize.y + anOutlineThickness);
+        {
+          PVector offset = myCurrentAnimation != null ? myCurrentAnimation.myOffset : new PVector(0,0);
+          PVector position = new PVector(myPosition.x + offset.x, myPosition.y + offset.y);
+          image(anImage, position.x, position.y, mySize.x + anOutlineThickness, mySize.y + anOutlineThickness);
+        }
   }
    
   boolean OnProcessInput(char aKey)
@@ -241,6 +251,10 @@ class Actor extends Pawn
   void OnDraw(boolean isSelected)
   {           
     PImage currentTexture = myCurrentTexture != null ? myCurrentTexture.GetTexture() : myCurrentAnimation.GetCurrentImage();
+    if(myLastImage != null && myLastImage != currentTexture)
+        mySize = GetRelativeSize(new PVector(currentTexture.width, currentTexture.height));
+       
+    myLastImage = currentTexture;
     if(myIsDisabled)
     {
       PImage texture = currentTexture.copy();
@@ -292,9 +306,12 @@ class Actor extends Pawn
         myRotation = newRotation;//lerp(myRotation, newRotation, 0.1);
     }
     
-    translate(myPosition.x, myPosition.y);
+    PVector offset = myCurrentAnimation != null ? myCurrentAnimation.myOffset : new PVector(0,0);
+    PVector position = new PVector(myPosition.x + offset.x, myPosition.y + offset.y); 
+    
+    translate(position.x, position.y);
     rotate(myRotation);
-    translate(-myPosition.x, -myPosition.y);
+    translate(-position.x, -position.y);
     DrawInternal(currentTexture, 0);
     
     if(myGlowTexture != null)
@@ -334,6 +351,7 @@ class Actor extends Pawn
   Animation myCurrentAnimation;
   Animation myCurrentIdle;
   Texture myCurrentTexture = null;
+  PImage myLastImage = null;
   TextInput myTextInput = null;
   Texture myGlowTexture = null;
   
