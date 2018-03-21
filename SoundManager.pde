@@ -4,7 +4,10 @@ class SoundManager
 {
   void PlayMusic(String aFileName)
   {
-    println("PlayMusic: " + aFileName);
+    if(aFileName.equals(myCurrentMusicName))
+      return;
+      
+    println("PlayMusic: " + aFileName + ":" + myCurrentMusicName);
     if(!mySounds.containsKey(aFileName))
     {
       String filePath = dataPath("Audio/" + aFileName);
@@ -15,6 +18,7 @@ class SoundManager
         return;
       }
       
+      println(aFileName);
       SoundFile sound = new SoundFile(ourThis, filePath);
       mySounds.put(aFileName, sound);
     }
@@ -43,7 +47,8 @@ class SoundManager
   {
     if(myCurrentMusic == aSound)
       return false;
-      
+    
+    myIsMuted = false;
     if(myCurrentMusic != null)
     {
       myCurrentMusic.stop();
@@ -55,11 +60,23 @@ class SoundManager
     return true;
   }
   
+  void StopMusic()
+  {
+    if(myCurrentMusic != null)
+    {
+      println("stopMusic");
+      SetMusicVolume(0.001);
+      myCurrentMusic.stop();
+      myCurrentMusic = null;
+    }
+    //myIsMuted = true;
+  }
+  
   void SetMusicVolume(float aVolume)
   {
     if(myCurrentMusic != null)
     {
-      LogLn("SetMusicVolume: " + aVolume + ": MaxVolume" + myMaxVolume);
+      //LogLn("SetMusicVolume: " + aVolume + ": MaxVolume" + myMaxVolume);
       myCurrentVolume = aVolume;
       myCurrentMusic.amp(aVolume * myMaxVolume);
     }

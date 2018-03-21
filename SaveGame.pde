@@ -59,7 +59,7 @@ class SaveGame
     myFlags.clear();
   }
   
-  void PringFlags()
+  void PrintFlags()
   {
     LogLn("Flags: ");
     for(Object flag : myFlags.toArray())

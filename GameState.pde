@@ -1,4 +1,5 @@
 import java.util.List;
+import processing.video.*;
 
 enum GameStateState
 {
@@ -30,8 +31,13 @@ class GameState
     {
       myBackgroundMusic = initData.GetData("Music");
     }
+    if(initData.HasData("NoMusic"))
+    {
+      ourSoundManager.StopMusic();
+      myHasNoMusic = true;
+    }
     
-    ourSaveGame.PringFlags();
+    ourSaveGame.PrintFlags();
   }
   
   void UpdateFlags(ConfigData aConfig)
@@ -130,6 +136,14 @@ class GameState
     }
     
     Collections.sort(myActorsInDrawOrder);
+    
+    if(initData.HasData("Movie"))
+    {
+      String filePath = dataPath("/Animations/" + initData.GetData("Movie"));
+      myMovie = new Movie(ourThis, filePath);
+      myMovie.play();
+    }
+    
     return hasInit;
   }
   
@@ -163,6 +177,15 @@ class GameState
   
   boolean OnUpdate(float aDeltaTime) 
   {
+    if(myMovie != null)
+    {
+      float timeLeft = myMovie.duration() - myMovie.time();
+      if(timeLeft <= 0)
+      {
+        SetNextLevel(myLevelConfig.GetChild("Init").GetData("NextLevel"), null);
+        return true;
+      }
+    }
     for(Pawn actor : myActors.values())
     {
       actor.Update(aDeltaTime);
@@ -220,6 +243,12 @@ class GameState
   
   void Draw()
   {
+    if(myMovie != null)
+    {
+      image(myMovie, width/2, height/2, width, height);
+      return;
+    }
+    
     if(myBackground != null)
       myBackground.DrawBackground();  
       
@@ -456,6 +485,12 @@ class GameState
     if(newLevel.myBackgroundMusic != null)
       if(!ourSoundManager.myCurrentMusicName.equals(newLevel.myBackgroundMusic))
         ourNeedsToFadeMusic = true;
+        
+    if(newLevel.myHasNoMusic == true)
+    {
+      ourNeedsToFadeMusic = true;
+      //ourSoundManager.StopMusic();
+    }
     myIsActive = false;
   }
   
@@ -495,6 +530,9 @@ class GameState
   ArrayList<Pawn> myActorsInDrawOrder = new ArrayList<Pawn>();
   ArrayList<String> myControlNames = new ArrayList<String>();
   LocText myTextToDisplay;
+  
+  boolean myHasNoMusic = false;
+  Movie myMovie = null;
   
   String myName;
   float myFadeInTime;
