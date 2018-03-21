@@ -46,6 +46,11 @@ class ConfigData
         if(!data.SetData(aReader))
           return false;
           
+        if(myChildren.containsKey(id))
+        {
+          Error("Already contains a entry called: " + id);
+          return false;
+        }
         myChildren.put(id, data);
         childDepth--;
         continue;
@@ -61,6 +66,11 @@ class ConfigData
       
       String theKey = GetKeyFromLine(line);
       String theValue = GetValueFromLine(line);
+     if(myData.containsKey(theKey))
+      {
+        Error("Already contains a entry called: " + theKey);
+        return false;
+      }
       myData.put(theKey, theValue);
     }
     return true;
@@ -76,7 +86,7 @@ class ConfigData
     if(myChildren.containsKey(anID))
       return myChildren.get(anID);
       
-    Error("ERROR, FAILED TO GET CHILD: " + anID); //<>//
+    Error("ERROR, FAILED TO GET CHILD: " + anID); //<>// //<>// //<>//
     return new ConfigData();
   }
   
