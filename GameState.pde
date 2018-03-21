@@ -50,6 +50,18 @@ class GameState
     }
   }
   
+  void AddToLevel(Pawn aPawn)
+  {
+      myActors.put(aPawn.myName, aPawn);
+      myActorsInDrawOrder.add(aPawn);
+      Collections.sort(myActorsInDrawOrder);
+//      for(Pawn p : myActorsInDrawOrder)
+//      {
+//        println(p.myName + " - " + p.myDrawLayer);
+//      }
+//      println("__");
+  }
+  
   boolean Init() 
   { 
     if(myTimeActive > 0)
@@ -75,7 +87,7 @@ class GameState
       {
         Pawn actor = CreatePawn(theKey, characters.GetChild(theKey));
         actor.Init(characters.GetChild(theKey));
-        myActors.put(theKey, actor);
+        AddToLevel(actor);
       }
     }
     
@@ -117,6 +129,7 @@ class GameState
       }
     }
     
+    Collections.sort(myActorsInDrawOrder);
     return hasInit;
   }
   
@@ -188,11 +201,7 @@ class GameState
       {
         FireTrigger(init.GetData("OnExit"));
       }
-      for(String name : myControlNames)
-      {
-        cp5.remove(name);
-      }
-      myControlNames.clear();
+      Reset();
     }
    
     myTimeInState = 0;
@@ -200,12 +209,21 @@ class GameState
     myNextState = aState;
   }
   
+  void Reset()
+  {
+    for(String name : myControlNames)
+      {
+        cp5.remove(name);
+      }
+      myControlNames.clear();
+  }
+  
   void Draw()
   {
     if(myBackground != null)
       myBackground.DrawBackground();  
       
-    for(Pawn actor : myActors.values())
+    for(Pawn actor : myActorsInDrawOrder)
     {
       pushStyle();
       actor.Draw(actor == myHoveredActor);
@@ -368,7 +386,10 @@ class GameState
           return true;        
       }
     }    
-      
+   
+    if(aTrigger.equals("OnReset"))
+      Reset();
+    
     if(OnTrigger(aTrigger))
       return true;
       
@@ -377,6 +398,28 @@ class GameState
       if(actor.OnTrigger(aTrigger))
         return true;
     }
+    
+    if(aTrigger.equals("OnSubmit"))
+    {
+      boolean isCorrect = true;
+      Code code = null;
+      for(Pawn pawn : myActorsInDrawOrder)
+      {
+        if(pawn.myIsVisible)
+        {
+          if(pawn.getClass() == Code.class)
+          {
+            code = (Code)pawn;
+            isCorrect &= code.myIsCorrect;
+          }
+        }
+      }
+      if(code != null)
+      {
+        code.OnSubmit(isCorrect);
+      }
+    }
+    
     return false;
   }
   
@@ -448,7 +491,8 @@ class GameState
   Texture myBackground = null;
   Pawn myHoveredActor = null;
   Pawn mySelectedActor = null;
-  HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();  
+  HashMap<String, Pawn> myActors = new HashMap<String, Pawn>();
+  ArrayList<Pawn> myActorsInDrawOrder = new ArrayList<Pawn>();
   ArrayList<String> myControlNames = new ArrayList<String>();
   LocText myTextToDisplay;
   

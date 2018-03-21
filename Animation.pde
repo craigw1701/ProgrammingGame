@@ -57,6 +57,7 @@ class Animation
   float myTotalRunningTime;
   boolean myIsLooping = true;
   boolean myIsRunning = true;
+  PVector myOffset = new PVector(0,0);
 };
 
 class AnimationData

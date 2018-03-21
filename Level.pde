@@ -41,8 +41,9 @@ class Level extends GameState
            break;
          
          Actor instruction = new Actor(GetInstructionName(myNumberOfInstructions));
+         instruction.myDrawLayer = 4;
          instruction.Init(myInstructions.GetChild(str(myNumberOfInstructions)));
-         myActors.put(instruction.myName, instruction);
+         AddToLevel(instruction);
          myNumberOfInstructions++;
        }
        if(myNumberOfInstructions > 0)
@@ -170,6 +171,7 @@ class Level extends GameState
     else if(aTrigger.equals("TRIGGER_RELOAD_LEVEL"))
     {
       ReloadLevel();
+      return true;
     }
     
     return false;
