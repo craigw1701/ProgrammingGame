@@ -70,7 +70,7 @@ class GameState
   
   boolean Init() 
   { 
-    if(myTimeActive > 0)
+    if(myTimeActive > 0) //<>//
       return true;
       
     LogLn("Init: " + myName);       
@@ -80,7 +80,7 @@ class GameState
     myTextToDisplay = new LocText(initData.GetData("Text"));
     
     if(initData.HasData("Background"))
-    {
+    { //<>//
       String background = initData.GetData("Background");
       if(background != "")
         myBackground =  new Texture("Backgrounds/" + background, true);
@@ -92,7 +92,7 @@ class GameState
       for(String theKey : characters.GetChildKeys())
       {
         Pawn actor = CreatePawn(theKey, characters.GetChild(theKey));
-        actor.Init(characters.GetChild(theKey));
+        actor.Init(characters.GetChild(theKey)); //<>//
         AddToLevel(actor);
       }
     }
@@ -139,7 +139,7 @@ class GameState
     
     if(initData.HasData("Movie"))
     {
-      String filePath = dataPath("/Animations/" + initData.GetData("Movie"));
+      String filePath = dataPath("Animations/" + initData.GetData("Movie"));
       myMovie = new Movie(ourThis, filePath);
       myMovie.play();
     }
@@ -165,7 +165,7 @@ class GameState
     //LogLn("Start: " + myName + ", active: " + myTimeActive + ", inState: " + myTimeInState );
     myFadePercent = 1-(myTimeInState / myFadeInTime);
     //println("Start: " + myName + " - " + myFadePercent);
-    return myTimeInState > myFadeInTime; 
+    return myTimeInState > myFadeInTime;  //<>//
   }
     
   boolean OnEnd(float aDeltaTime) 
@@ -226,7 +226,7 @@ class GameState
       }
       Reset();
     }
-   
+    //<>//
     myTimeInState = 0;
     myState = aState;
     myNextState = aState;
