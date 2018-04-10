@@ -153,6 +153,17 @@ class Code extends Pawn
     return handled; 
   }
   
+  void Cheat()
+  {
+    ConfigData submitData = myConfig.GetChild("OnSubmit");
+    for(String data : submitData.myData.keySet())
+    {
+      String fieldName = GetTextFieldName(Integer.parseInt(data));
+      Textfield textField = myTextFieldMap.get(fieldName);
+      textField.setText(submitData.myData.get(data));
+    }
+  }
+  
   void OnSubmit(boolean aIsCorrect)
   {
     if(aIsCorrect)
@@ -229,6 +240,11 @@ class Code extends Pawn
       
       return true;
     }
+    else if(aKey == 'c' || aKey == 'C')
+    {
+      Cheat();
+      return false;
+    }    
     
     if(aKey >= 0 && aKey <= 9)
     //if(myCurrentFocus != null)
