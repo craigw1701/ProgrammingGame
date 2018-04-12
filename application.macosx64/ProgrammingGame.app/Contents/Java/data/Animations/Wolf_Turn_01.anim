@@ -1,0 +1,23 @@
+Length = 20
+Frames = {
+	[0] = Wolf_Turn_01/Wolf_Turn_0000.png
+	[1] = Wolf_Turn_01/Wolf_Turn_0001.png
+	[2] = Wolf_Turn_01/Wolf_Turn_0002.png
+	[3] = Wolf_Turn_01/Wolf_Turn_0003.png
+	[4] = Wolf_Turn_01/Wolf_Turn_0004.png
+	[5] = Wolf_Turn_01/Wolf_Turn_0005.png
+	[6] = Wolf_Turn_01/Wolf_Turn_0006.png
+	[7] = Wolf_Turn_01/Wolf_Turn_0007.png
+	[8] = Wolf_Turn_01/Wolf_Turn_0008.png
+	[9] = Wolf_Turn_01/Wolf_Turn_0009.png
+	[10] = Wolf_Turn_01/Wolf_Turn_0010.png
+	[11] = Wolf_Turn_01/Wolf_Turn_0011.png
+	[12] = Wolf_Turn_01/Wolf_Turn_0012.png
+	[13] = Wolf_Turn_01/Wolf_Turn_0013.png
+	[14] = Wolf_Turn_01/Wolf_Turn_0014.png
+	[15] = Wolf_Turn_01/Wolf_Turn_0015.png
+	[16] = Wolf_Turn_01/Wolf_Turn_0016.png
+	[17] = Wolf_Turn_01/Wolf_Turn_0017.png
+	[18] = Wolf_Turn_01/Wolf_Turn_0018.png
+	[19] = Wolf_Turn_01/Wolf_Turn_0019.png
+}

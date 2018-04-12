@@ -1,0 +1,22 @@
+Length = 19
+Frames = {
+	[0] = moth1startanimation/moth1start0000.png
+	[1] = moth1startanimation/moth1start0001.png
+	[2] = moth1startanimation/moth1start0002.png
+	[3] = moth1startanimation/moth1start0003.png
+	[4] = moth1startanimation/moth1start0004.png
+	[5] = moth1startanimation/moth1start0005.png
+	[6] = moth1startanimation/moth1start0006.png
+	[7] = moth1startanimation/moth1start0007.png
+	[8] = moth1startanimation/moth1start0008.png
+	[9] = moth1startanimation/moth1start0009.png
+	[10] = moth1startanimation/moth1start0010.png
+	[11] = moth1startanimation/moth1start0011.png
+	[12] = moth1startanimation/moth1start0012.png
+	[13] = moth1startanimation/moth1start0013.png
+	[14] = moth1startanimation/moth1start0014.png
+	[15] = moth1startanimation/moth1start0015.png
+	[16] = moth1startanimation/moth1start0016.png
+	[17] = moth1startanimation/moth1start0017.png
+	[18] = moth1startanimation/moth1start0018.png
+}
