@@ -22,6 +22,13 @@ class Actor extends Pawn
       
     if(myConfig.HasData("HasOutline"))
       myHasOutline = myConfig.GetData("HasOutline").equals("true");
+    
+    if(myConfig.HasData("PlacebleLocation"))
+    {
+      myPlaceableLocation = myConfig.GetData("PlacebleLocation");      
+      myIsSelectable = true;
+      myTint = color(221, 182, 92, 255);
+    }
   }
   
   void OnSetFromConfig(ConfigData aConfig) 
@@ -130,7 +137,48 @@ class Actor extends Pawn
       handled = true;
     }
     
+    
     return handled;
+  }
+  
+  boolean PlaceOn(Actor anActorToPlaceOn)
+  {
+    if(!myPlaceableLocation.equalsIgnoreCase(anActorToPlaceOn.myName))
+      return false;
+      
+    myIsPlaced = true;
+    myIsSelectable = false;
+    myIsDisabled = true;
+    SetVisible(false);
+    myPlaceableLocation = null;
+    
+    anActorToPlaceOn.myIsSelectable = false;
+    anActorToPlaceOn.myIsDisabled = true;
+    anActorToPlaceOn.SetVisible(false);
+    
+    if(myConfig.HasData("ReplaceActor"))
+    {
+      String actorName = myConfig.GetData("ReplaceActor");
+      Pawn actor = gsManager.myCurrentState.myActors.get(actorName);
+      actor.SetVisible(true);
+      boolean replacedAll = true; //<>//
+      for(Pawn pawn : gsManager.myCurrentState.myActors.values())
+      {
+        if(pawn instanceof Actor)
+        {
+          Actor a = (Actor)pawn;
+          if(a.myPlaceableLocation != null)
+            replacedAll = false; //<>//
+        }
+      }
+      if(replacedAll) //<>//
+      {
+        FireTrigger("TRIGGER_REPLACED_ALL");
+      }
+    }
+  
+    anActorToPlaceOn.myIsSelectable = false;
+    return true;
   }
   
   void OnUpdate(float aDeltaTime)
@@ -174,9 +222,48 @@ class Actor extends Pawn
     }
   }
   
+  boolean IsSelectable()
+  {    
+    if(myOnClickTrigger != null)
+    {
+      if(myOnClickTrigger.equalsIgnoreCase("TRIGGER_TRY_PLACE"))
+      {
+        if(gsManager.myCurrentState.myPlaceableActor == null)
+          return false;
+      }
+    }
+    
+    return super.IsSelectable();
+  }
+  
   boolean OnClicked()
-  {
-    FireTrigger(myOnClickTrigger);
+  {    
+    if(!myIsPlaced && myPlaceableLocation != null)
+    {
+      if(gsManager.myCurrentState.myPlaceableActor == this)
+        gsManager.myCurrentState.myPlaceableActor = null;
+      else
+        gsManager.myCurrentState.myPlaceableActor = this;
+    }
+    
+    if(myOnClickTrigger != null)
+    {
+      if(myOnClickTrigger.equalsIgnoreCase("TRIGGER_TRY_PLACE"))
+      {
+        if(gsManager.myCurrentState.myPlaceableActor != null)
+        {
+          if(gsManager.myCurrentState.myPlaceableActor.PlaceOn(this))
+          {
+            gsManager.myCurrentState.myPlaceableActor = null;
+          }
+        } 
+      }
+      else
+      {
+        FireTrigger(myOnClickTrigger);
+      }
+    }
+    
     return true;
   } 
     
@@ -272,7 +359,8 @@ class Actor extends Pawn
       return;
     }
     
-    if(isSelected && myIsSelectable)
+    boolean selected = (isSelected  && IsSelectable()) || gsManager.myCurrentState.myPlaceableActor == this;
+    if(selected)
     {
       if(myGlowTexture == null)
       {
@@ -367,6 +455,9 @@ class Actor extends Pawn
   float myTravelPercent = 0;
   int myPathSubSection = 0;
   float myRotation = 0;
+  
+  String myPlaceableLocation = null;
+  boolean myIsPlaced = false;
   
   // DEBUG
   int myPathIndex = 0;

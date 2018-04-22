@@ -106,7 +106,7 @@ class Pawn implements Comparable<Pawn>
     if(myIsFadingIn || myIsFadingOut)
     {
       if(!myIsVisible)
-      { //<>// //<>//
+      { //<>// //<>// //<>//
         SetVisible(true);
       }
       
@@ -166,10 +166,15 @@ class Pawn implements Comparable<Pawn>
     if(!myIsVisible)
       return false;
       
-    if(!myIsSelectable)
+    if(!IsSelectable())
       return false;
       
     return OnClicked();
+  }
+  
+  boolean IsSelectable()
+  {
+    return myIsSelectable;
   }
     
   PVector GetBoundingBoxSize()
