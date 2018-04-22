@@ -1,6 +1,6 @@
 class LocManager
 {
-  LocManager() { myDefaultLanguage = "en-GB"; }
+  LocManager() { myDefaultLanguage = "sv-SE"; } // "en-GB"
   
   void LoadLanguage(String aLanguage)
   {
