@@ -52,8 +52,8 @@ void setup()
   
   gsManager.AddState(new SplashScreen());
   gsManager.AddToQueue(new FrontEnd());
-  locManager.LoadLanguage("sv-SE");
   locManager.LoadLanguage("en-GB");
+  locManager.LoadLanguage("sv-SE");
   
   ourCursor = new Cursor();
   //text("word", width/2, height/2);
