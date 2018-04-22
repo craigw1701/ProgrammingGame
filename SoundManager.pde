@@ -41,6 +41,17 @@ class SoundManager
     {
       SetMusicVolume(0);
     }
+    
+    if(myCurrentMusic != null)
+    {
+      int timePlaying = millis() - myMusicStartTime;
+      float timePlayingF = float(timePlaying) / 1000;
+      if(myCurrentMusic.duration() < timePlayingF + 1)  // Hack to loop sounds without it crashing... :'(
+      {
+        myCurrentMusic.jump(1);
+        myMusicStartTime = millis();
+      }
+    }
   }
   
   boolean PlayMusic(SoundFile aSound)
@@ -54,6 +65,7 @@ class SoundManager
       myCurrentMusic.stop();
     }
     
+    myMusicStartTime = millis();
     aSound.play();
     //aSound.loop();
     myCurrentMusic = aSound;
@@ -115,4 +127,6 @@ class SoundManager
   float myCurrentVolume = 1;
   float myTargetVolume = 1;
   boolean myIsMuted = false;
+  
+  int myMusicStartTime;
 };
