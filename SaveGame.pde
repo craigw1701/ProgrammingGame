@@ -2,7 +2,7 @@ import java.util.*;
 
 boolean CheckFlags(ConfigData aConfig)
 {    
-  if(aConfig.HasChild("CheckAllFlags"))
+  if(aConfig.HasChild("CheckAllFlags")) //<>//
   {
     ConfigData checkFlags = aConfig.GetChild("CheckAllFlags");
     for(String theFlag : checkFlags.myData.keySet())
@@ -20,8 +20,9 @@ boolean CheckFlags(ConfigData aConfig)
       if(ourSaveGame.HasFlagSet(theFlag) == IsTrue(checkFlags.GetData(theFlag)))
         return true;
     }
+    return false;
   }
-  return false;
+  return true;
 }
 
 class SaveGame
