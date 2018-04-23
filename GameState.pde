@@ -277,7 +277,9 @@ class GameState
       }
       
       textAlign(LEFT, BOTTOM);
-      text("Selected Actor: " + ((mySelectedActor == null) ? "null" : mySelectedActor.myName) + "\nHovered Actor: " + ((myHoveredActor == null) ? "null" : myHoveredActor.myName), 0, height);
+      text("Selected Actor: " + ((mySelectedActor == null) ? "null" : mySelectedActor.myName) +
+          "\nHovered Actor: " + ((myHoveredActor == null) ? "null" : myHoveredActor.myName) + 
+          "\nPlaceable Actor: " + ((myPlaceableActor == null) ? "null" : myPlaceableActor.myName), 0, height);
       
       popStyle();
     }

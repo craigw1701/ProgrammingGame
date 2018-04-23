@@ -29,6 +29,11 @@ class Actor extends Pawn
       myIsSelectable = true;
       myTint = color(221, 182, 92, 255);
     }
+    
+    if(myConfig.HasData("PlaceLocation"))
+    {
+      myAmIAPlaceableLocation = true;
+    }
   }
   
   void OnSetFromConfig(ConfigData aConfig) 
@@ -61,7 +66,12 @@ class Actor extends Pawn
     {
       myGlowTexture = new Texture(aConfig.GetData("GlowImage"), false);
     }
-         
+    
+    if(aConfig.HasData("ScaleTimes"))
+    {
+      myScale = Float.parseFloat(aConfig.GetData("ScaleTimes"));
+    }
+    
     if(aConfig.HasData("Scale"))
     {
       mySize = GetVector2FromLine(aConfig.GetData("Scale"));
@@ -75,7 +85,7 @@ class Actor extends Pawn
         texture = myCurrentAnimation.GetCurrentImage();
       
       if(texture != null)
-        mySize = GetRelativeSize(new PVector(texture.width, texture.height));
+        mySize = GetRelativeSize(new PVector(texture.width * myScale, texture.height * myScale));
       else
         mySize = new PVector(400,400);
     }
@@ -141,37 +151,59 @@ class Actor extends Pawn
     return handled;
   }
   
+  String GetPlaceName()
+  {
+    if(myConfig.HasData("PlaceableName"))
+    {
+      return myConfig.GetData("PlaceableName");
+    }    
+    return myName;
+  }
+  
   boolean PlaceOn(Actor anActorToPlaceOn)
   {
-    if(!myPlaceableLocation.equalsIgnoreCase(anActorToPlaceOn.myName))
+    if(!myPlaceableLocation.equalsIgnoreCase(anActorToPlaceOn.GetPlaceName()))
       return false;
       
-    myIsPlaced = true;
-    myIsSelectable = false;
-    myIsDisabled = true;
-    SetVisible(false);
-    myPlaceableLocation = null;
-    
+    if(!myConfig.HasData("KeepPlacedLocation"))
+    {
+      myIsPlaced = true;
+      myIsSelectable = false;
+      myIsDisabled = true;
+      SetVisible(false);
+      myPlaceableLocation = null;
+    }
+    anActorToPlaceOn.myAmIAPlaceableLocation = false;
     anActorToPlaceOn.myIsSelectable = false;
     anActorToPlaceOn.myIsDisabled = true;
-    anActorToPlaceOn.SetVisible(false);
+    if(!myConfig.HasData("KeepPlacedLocation"))
+      anActorToPlaceOn.SetVisible(false);
     
+    String actorName = null;    
     if(myConfig.HasData("ReplaceActor"))
     {
-      String actorName = myConfig.GetData("ReplaceActor");
+      actorName = myConfig.GetData("ReplaceActor");
+    }
+    else if(anActorToPlaceOn.myConfig.HasData("ReplaceActor"))
+    {
+      actorName = anActorToPlaceOn.myConfig.GetData("ReplaceActor");
+    }
+    
+    if(actorName != null)
+    {
       Pawn actor = gsManager.myCurrentState.myActors.get(actorName);
       actor.SetVisible(true);
-      boolean replacedAll = true; //<>//
+      boolean replacedAll = true;
       for(Pawn pawn : gsManager.myCurrentState.myActors.values())
       {
         if(pawn instanceof Actor)
         {
           Actor a = (Actor)pawn;
-          if(a.myPlaceableLocation != null)
-            replacedAll = false; //<>//
+          if(a.myAmIAPlaceableLocation == true)
+            replacedAll = false;
         }
       }
-      if(replacedAll) //<>//
+      if(replacedAll)
       {
         FireTrigger("TRIGGER_REPLACED_ALL");
       }
@@ -339,7 +371,7 @@ class Actor extends Pawn
   {           
     PImage currentTexture = myCurrentTexture != null ? myCurrentTexture.GetTexture() : myCurrentAnimation.GetCurrentImage();
     if(myLastImage != null && myLastImage != currentTexture)
-        mySize = GetRelativeSize(new PVector(currentTexture.width, currentTexture.height));
+        mySize = GetRelativeSize(new PVector(currentTexture.width * myScale, currentTexture.height * myScale));
        
     myLastImage = currentTexture;
     if(myIsDisabled)
@@ -403,7 +435,7 @@ class Actor extends Pawn
     DrawInternal(currentTexture, 0);
     
     if(myGlowTexture != null)
-      if(isSelected && myIsSelectable)
+      if(selected)
         DrawInternal(myGlowTexture.GetTexture(), 10);
     
     popMatrix();      
@@ -455,9 +487,11 @@ class Actor extends Pawn
   float myTravelPercent = 0;
   int myPathSubSection = 0;
   float myRotation = 0;
+  float myScale = 1;
   
   String myPlaceableLocation = null;
   boolean myIsPlaced = false;
+  boolean myAmIAPlaceableLocation = false;
   
   // DEBUG
   int myPathIndex = 0;
