@@ -8,6 +8,8 @@ class PauseMenu extends GameState
     myFadeColor = color(0,0,0,128);
     myDrawWhileTransitioning = false;
     myIsQuitting = false;
+    
+    myPauseTexture = new Texture("Quit_Background.png", false);
   }
   
   boolean ProcessInput(char aKey)
@@ -55,7 +57,8 @@ class PauseMenu extends GameState
     {
       fill(248, 236, 194, 255);
       PVector size = GetPercentToScreen(new PVector(0.4, 0.375));
-      rect(width/2, height/2, size.x, size.y);
+      myPauseTexture.Draw(new PVector(width/2, height/2), size);
+      //rect(width/2, height/2, size.x, size.y);
       //fill(0);
       //text("Pause", width/2, height/2);      
       for(Pawn actor : myActors.values())
@@ -68,4 +71,5 @@ class PauseMenu extends GameState
   }
   
   boolean myIsQuitting;
+  Texture myPauseTexture;
 };

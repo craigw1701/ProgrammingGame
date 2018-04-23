@@ -34,8 +34,12 @@ class Level extends GameState
      if(myLevelConfig.HasChild("Instructions"))
      {
        myInstructions = myLevelConfig.GetChild("Instructions");
+       if(!CheckFlags(myInstructions)) //<>//
+       {
+           myInstructions = null;
+       }
          
-       while(true)
+       while(myInstructions != null)
        {
          if(!myInstructions.HasChild(str(myNumberOfInstructions)))
            break;
