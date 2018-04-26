@@ -1,0 +1,5 @@
+Length = 2
+Frames = {
+	[0] = moth1startanimation/moth1start0017.png
+	[1] = moth1startanimation/moth1start0018.png
+}
