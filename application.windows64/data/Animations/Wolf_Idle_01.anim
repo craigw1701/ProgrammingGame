@@ -1,0 +1,17 @@
+Length = 14
+Frames = {
+	[0] = Wolf_Idle_01/Wolf_Idle_0000.png
+	[1] = Wolf_Idle_01/Wolf_Idle_0001.png
+	[2] = Wolf_Idle_01/Wolf_Idle_0002.png
+	[3] = Wolf_Idle_01/Wolf_Idle_0003.png
+	[4] = Wolf_Idle_01/Wolf_Idle_0004.png
+	[5] = Wolf_Idle_01/Wolf_Idle_0005.png
+	[6] = Wolf_Idle_01/Wolf_Idle_0006.png
+	[7] = Wolf_Idle_01/Wolf_Idle_0007.png
+	[8] = Wolf_Idle_01/Wolf_Idle_0008.png
+	[9] = Wolf_Idle_01/Wolf_Idle_0009.png
+	[10] = Wolf_Idle_01/Wolf_Idle_0010.png
+	[11] = Wolf_Idle_01/Wolf_Idle_0011.png
+	[12] = Wolf_Idle_01/Wolf_Idle_0012.png
+	[13] = Wolf_Idle_01/Wolf_Idle_0013.png
+}

@@ -1,0 +1,18 @@
+Length = 15
+Frames = {
+	[0] = Moth_03_Idle_02/Moth_03_Idle_02_0000.png
+	[1] = Moth_03_Idle_02/Moth_03_Idle_02_0001.png
+	[2] = Moth_03_Idle_02/Moth_03_Idle_02_0002.png
+	[3] = Moth_03_Idle_02/Moth_03_Idle_02_0003.png
+	[4] = Moth_03_Idle_02/Moth_03_Idle_02_0004.png
+	[5] = Moth_03_Idle_02/Moth_03_Idle_02_0005.png
+	[6] = Moth_03_Idle_02/Moth_03_Idle_02_0006.png
+	[7] = Moth_03_Idle_02/Moth_03_Idle_02_0007.png
+	[8] = Moth_03_Idle_02/Moth_03_Idle_02_0008.png
+	[9] = Moth_03_Idle_02/Moth_03_Idle_02_0009.png
+	[10] = Moth_03_Idle_02/Moth_03_Idle_02_0010.png
+	[11] = Moth_03_Idle_02/Moth_03_Idle_02_0011.png
+	[12] = Moth_03_Idle_02/Moth_03_Idle_02_0012.png
+	[13] = Moth_03_Idle_02/Moth_03_Idle_02_0013.png
+	[14] = Moth_03_Idle_02/Moth_03_Idle_02_0014.png
+}
