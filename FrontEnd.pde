@@ -2,7 +2,7 @@ class FrontEnd extends GameState
 {
   FrontEnd()
   { 
-    super("FrontEnd"); 
+    super("IntroMovie"); 
     myIsActive = true; 
   }
   
