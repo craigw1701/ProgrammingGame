@@ -21,7 +21,7 @@ class FrontEnd extends GameState
   void StartNewGame()
   {
     ourSaveGame.NewGame();
-    SetNextLevel("IntroMovie", null);
+    SetNextLevel("Level_001", null);
   }
   
   boolean OnTrigger(String aTrigger)

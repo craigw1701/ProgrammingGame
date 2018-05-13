@@ -33,8 +33,8 @@ void setup()
 {
   ourThis = this;
   ourFrameRate = new FrameRate();
-  fullScreen(FX2D);
-  //size(1280,800, FX2D);
+  //fullScreen(FX2D);
+  size(1280,800, FX2D);
   //size(1280,800);
   font = loadFont("WhiteRabbit-32.vlw");
   textFont(font);
@@ -58,7 +58,7 @@ void setup()
   ourCursor = new Cursor();
   //text("word", width/2, height/2);
 }
- //<>// //<>//
+ //<>// //<>// //<>//
 void Fade(float aFadePercent, color aFadeColor)
 {
   pushStyle();
